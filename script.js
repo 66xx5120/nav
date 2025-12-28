@@ -1,31 +1,85 @@
 // 1. 随机二次元背景 (防缓存优化版)
 function setRandomBackground() {
-    // 使用保罗API，质量较高，涵盖风景和动漫人物
     const baseUrl = "https://api.paugram.com/wallpaper/";
+    // 如果上面的API挂了，可以用这个: const baseUrl = "https://t.mwm.moe/pc"; 
     
-    // 也可以试试这个纯动漫的接口 (如果上面那个挂了，把下面这行前面的 // 去掉，把上面那行加上 //)
-    // const baseUrl = "https://t.mwm.moe/pc"; 
-
-    // 添加时间戳，强制浏览器每次刷新都去请求新图片，而不是读缓存
     const timestamp = new Date().getTime();
     const finalUrl = `${baseUrl}?t=${timestamp}`;
-
     const background = document.querySelector('.background');
     
-    // 创建图片对象预加载，等图片下载完了再显示，防止背景变白
     const img = new Image();
     img.src = finalUrl;
-    
     img.onload = function() {
         background.style.backgroundImage = `url('${finalUrl}')`;
     };
 }
 
-// 2. 实时时钟与问候
+// 2. 搜索功能配置 (支持多引擎切换)
+const searchEngines = {
+    google: {
+        url: "https://www.google.com/search?q=",
+        icon: "fab fa-google",
+        placeholder: "Search with Google..."
+    },
+    baidu: {
+        url: "https://www.baidu.com/s?wd=",
+        icon: "fas fa-paw",
+        placeholder: "百度一下，你就知道"
+    },
+    bing: {
+        url: "https://www.bing.com/search?q=",
+        icon: "fab fa-microsoft",
+        placeholder: "Search with Bing..."
+    },
+    duckduckgo: {
+        url: "https://duckduckgo.com/?q=",
+        icon: "fas fa-shield-alt", 
+        placeholder: "Privacy Search..."
+    }
+};
+
+// 【修改点】默认引擎设为 bing
+let currentEngine = 'bing';
+
+function toggleEngineMenu() {
+    document.getElementById('engine-options').classList.toggle('show');
+}
+
+function selectEngine(engineKey) {
+    const engine = searchEngines[engineKey];
+    if (!engine) return;
+    currentEngine = engineKey;
+    
+    document.getElementById('current-engine-icon').className = engine.icon;
+    document.getElementById('search-input').placeholder = engine.placeholder;
+    toggleEngineMenu();
+}
+
+function doSearch() {
+    const query = document.getElementById('search-input').value;
+    if (query) {
+        window.open(searchEngines[currentEngine].url + encodeURIComponent(query), '_blank');
+    }
+}
+
+// 点击外部关闭菜单
+document.addEventListener('click', function(e) {
+    const selector = document.getElementById('engine-selector');
+    const menu = document.getElementById('engine-options');
+    if (!selector.contains(e.target) && menu.classList.contains('show')) {
+        menu.classList.remove('show');
+    }
+});
+
+// 绑定回车键
+document.getElementById('search-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') doSearch();
+});
+
+// 3. 实时时钟
 function updateClock() {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('zh-CN', { hour12: false });
-    document.getElementById('clock').textContent = timeString;
+    document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN', { hour12: false });
     
     const hour = now.getHours();
     let greeting = "你好";
@@ -35,38 +89,23 @@ function updateClock() {
     else if (hour < 18) greeting = "下午好，喝杯茶提提神";
     else if (hour < 23) greeting = "晚上好，享受属于你的时间";
     else greeting = "夜深了，晚安";
-    
     document.getElementById('greeting').innerText = greeting;
 }
 
-// 3. 一言 API (获取随机句子)
+// 4. 一言 API
 function fetchHitokoto() {
-    fetch('https://v1.hitokoto.cn/?c=a&c=b') // a=动画, b=漫画
+    fetch('https://v1.hitokoto.cn/?c=a&c=b')
         .then(response => response.json())
         .then(data => {
-            const hitokoto = document.getElementById('hitokoto_text');
-            hitokoto.innerText = `${data.hitokoto} —— ${data.from}`;
+            document.getElementById('hitokoto_text').innerText = `${data.hitokoto} —— ${data.from}`;
         })
         .catch(() => {
             document.getElementById('hitokoto_text').innerText = "今天的风儿甚是喧嚣...";
         });
 }
 
-// 4. 搜索功能 (默认Google)
-function doSearch() {
-    const query = document.getElementById('search-input').value;
-    if (query) {
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-    }
-}
-
-// 绑定回车键
-document.getElementById('search-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') doSearch();
-});
-
-// === 初始化执行 ===
-setRandomBackground(); // 加载背景
-setInterval(updateClock, 1000); // 启动时钟
-updateClock(); // 立即显示时间
-fetchHitokoto(); // 获取句子
+// 初始化
+setRandomBackground();
+setInterval(updateClock, 1000);
+updateClock();
+fetchHitokoto();

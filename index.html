@@ -20,7 +20,28 @@
         </header>
 
         <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search something...">
+            <div class="search-engine-selector" id="engine-selector">
+                <div class="selected-engine" onclick="toggleEngineMenu()">
+                    <i class="fab fa-microsoft" id="current-engine-icon"></i>
+                </div>
+                <div class="engine-options" id="engine-options">
+                    <div class="option" onclick="selectEngine('google')">
+                        <i class="fab fa-google"></i> <span>Google</span>
+                    </div>
+                    <div class="option" onclick="selectEngine('baidu')">
+                        <i class="fas fa-paw"></i> <span>Baidu</span>
+                    </div>
+                    <div class="option" onclick="selectEngine('bing')">
+                        <i class="fab fa-microsoft"></i> <span>Bing</span>
+                    </div>
+                    <div class="option" onclick="selectEngine('duckduckgo')">
+                        <i class="fas fa-shield-alt"></i> <span>DuckDuckGo</span>
+                    </div>
+                </div>
+            </div>
+
+            <input type="text" id="search-input" placeholder="Search with Bing...">
+            
             <button onclick="doSearch()"><i class="fas fa-search"></i></button>
         </div>
 
