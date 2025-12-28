@@ -38,7 +38,7 @@ const searchEngines = {
     }
 };
 
-// 【修改点】默认引擎设为 bing
+// 默认引擎设为 bing
 let currentEngine = 'bing';
 
 function toggleEngineMenu() {
