@@ -1,0 +1,177 @@
+:root {
+    --primary-color: rgba(255, 255, 255, 0.25);
+    --hover-color: rgba(255, 255, 255, 0.4);
+    --text-color: #fff;
+    --accent-pink: #ff9a9e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: var(--text-color);
+}
+
+/* 背景图设置 */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 这里的URL可以换成你喜欢的二次元图片链接 */
+    background-image: url('https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?q=80&w=2069&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    filter: brightness(0.7); /*稍微变暗以突出文字*/
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.2); /* 整体深色遮罩 */
+    backdrop-filter: blur(10px); /* 毛玻璃核心 */
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* 头像与文字 */
+.avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    transition: transform 0.5s;
+}
+
+.avatar img:hover {
+    transform: rotate(360deg);
+}
+
+h1 {
+    margin: 15px 0 5px;
+    font-size: 2em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hitokoto {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+/* 搜索框 */
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.search-box input {
+    padding: 10px 20px;
+    border-radius: 20px 0 0 20px;
+    border: none;
+    outline: none;
+    width: 60%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.search-box button {
+    padding: 10px 20px;
+    border-radius: 0 20px 20px 0;
+    border: none;
+    background: var(--accent-pink);
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-box button:hover {
+    background: #ff758c;
+}
+
+/* 卡片网格 */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: var(--primary-color);
+    padding: 20px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card:hover {
+    background: var(--hover-color);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card .icon {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: var(--accent-pink);
+}
+
+.card h3 {
+    font-size: 1.1em;
+}
+
+.card p {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+/* 底部 */
+footer {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+#clock {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-family: monospace;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 移动端适配 */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+    .cards-grid {
+        grid-template-columns: 1fr 1fr; /* 手机上强制两列 */
+    }
+}

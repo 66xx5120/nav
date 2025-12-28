@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loong's Portal | 个人导航</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="container">
+        <header>
+            <div class="avatar">
+                <img src="https://ui-avatars.com/api/?name=Loong&background=random&size=128" alt="Avatar">
+            </div>
+            <h1 id="greeting">你好，旅行者</h1>
+            <p class="hitokoto" id="hitokoto_text">:D 获取中...</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search something...">
+            <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="cards-grid">
+            <a href="https://blog.loong2004.ip-ddns.com/" target="_blank" class="card">
+                <div class="icon"><i class="fas fa-blog"></i></div>
+                <div class="info">
+                    <h3>个人博客</h3>
+                    <p>My Tech Blog</p>
+                </div>
+            </a>
+
+            <a href="http://video.soomin.de5.net" target="_blank" class="card">
+                <div class="icon"><i class="fas fa-play-circle"></i></div>
+                <div class="info">
+                    <h3>私人影院</h3>
+                    <p>Video Platform</p>
+                </div>
+            </a>
+
+            <a href="http://video.soomin.de5.net" target="_blank" class="card">
+                <div class="icon"><i class="fas fa-images"></i></div>
+                <div class="info">
+                    <h3>个人图床</h3>
+                    <p>Image Host</p>
+                </div>
+            </a>
+
+            <a href="mailto:monki@monki.de5.net" class="card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div class="info">
+                    <h3>联系我</h3>
+                    <p>Send Email</p>
+                </div>
+            </a>
+        </div>
+
+        <footer>
+            <div id="clock">00:00:00</div>
+            <p>&copy; 2025 Loong's Space. Powered by Cloudflare.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
