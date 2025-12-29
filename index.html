@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Loong's Personal Portal">
-    <title>Loong's Portal | 个人导航</title>
+    <title>Loong's Terminal | 个人控制台</title>
     
     <link rel="preconnect" href="https://npm.elemecdn.com">
     <link rel="preconnect" href="https://cdn.bootcdn.net">
 
     <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print" onload="this.media='all'">
     <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
@@ -19,14 +18,15 @@
 </head>
 <body>
     <div class="background"></div>
+    <div class="grid-overlay"></div>
 
     <div class="container">
         <header>
             <div class="avatar">
                 <img src="./avatar.jpg" alt="Loong Avatar">
             </div>
-            <h1 id="greeting">你好，旅行者</h1>
-            <p class="hitokoto" id="hitokoto_text">正在连接异世界...</p>
+            <h1 id="greeting" class="glitch-text">SYSTEM ONLINE</h1>
+            <p class="hitokoto" id="hitokoto_text">正在建立神经连接...</p>
         </header>
 
         <div class="search-box">
@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <input type="text" id="search-input" placeholder="Search with Bing...">
+            <input type="text" id="search-input" placeholder="Enter Command...">
             
             <button onclick="doSearch()"><i class="fas fa-search"></i></button>
         </div>
@@ -60,7 +60,7 @@
                 <div class="icon"><i class="fas fa-rss"></i></div>
                 <div class="info">
                     <h3>个人博客</h3>
-                    <p>My Tech Blog</p>
+                    <p>BLOG LINK</p>
                 </div>
             </a>
 
@@ -68,7 +68,7 @@
                 <div class="icon"><i class="fas fa-play-circle"></i></div>
                 <div class="info">
                     <h3>私人影院</h3>
-                    <p>Video Platform</p>
+                    <p>VIDEO HUB</p>
                 </div>
             </a>
 
@@ -76,7 +76,7 @@
                 <div class="icon"><i class="fas fa-image"></i></div>
                 <div class="info">
                     <h3>个人图床</h3>
-                    <p>Image Host</p>
+                    <p>IMG STORAGE</p>
                 </div>
             </a>
 
@@ -84,7 +84,7 @@
                 <div class="icon"><i class="fas fa-server"></i></div>
                 <div class="info">
                     <h3>订阅管理</h3>
-                    <p>SubStore</p>
+                    <p>SUB CENTER</p>
                 </div>
             </a>
         </div>
@@ -100,7 +100,7 @@
             </div>
 
             <div id="clock">00:00:00</div>
-            <p>&copy; 2025 Loong's Space. Powered by Cloudflare.</p>
+            <p>&copy; 2025 Loong's Terminal. System Normal.</p>
         </footer>
     </div>
 
