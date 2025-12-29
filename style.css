@@ -1,10 +1,18 @@
 :root {
-    --primary-bg: rgba(15, 23, 42, 0.6); /* 更深的蓝黑底色 */
+    --primary-bg: rgba(15, 23, 42, 0.6);
     --hover-bg: rgba(30, 41, 59, 0.8);
     --text-color: #e2e8f0;
-    --accent-cyan: #06b6d4; /* 赛博青 */
-    --accent-pink: #f472b6; /* 赛博粉 */
+    --accent-cyan: #06b6d4;
+    --accent-pink: #f472b6;
     --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* 1. 核心优化：定义本地数码字体 */
+@font-face {
+    font-family: 'DS-Digital';
+    /* 请确保你下载了字体文件并重命名为 DS-DIGI.TTF 放在同级目录 */
+    src: url('./DS-DIGI.TTF') format('truetype');
+    font-display: swap; /* 防止字体加载时文字隐形 */
 }
 
 * {
@@ -21,10 +29,9 @@ body {
     align-items: center;
     overflow: hidden;
     color: var(--text-color);
-    background-color: #0f172a; /* 防止背景图加载前的黑屏 */
+    background-color: #0f172a;
 }
 
-/* 1. 背景层 (图片) */
 .background {
     position: fixed;
     top: 0;
@@ -34,12 +41,10 @@ body {
     background-size: cover;
     background-position: center;
     z-index: -2;
-    /* 降低亮度，提高对比度，让前景更清晰 */
     filter: brightness(0.6) blur(2px) contrast(1.1); 
     transition: background-image 0.5s ease-in-out;
 }
 
-/* 2. 新增：科技网格遮罩 */
 .grid-overlay {
     position: fixed;
     top: 0;
@@ -47,32 +52,28 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    /* 创建一个淡淡的网格纹理 */
     background-image: 
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px; /* 网格大小 */
+    background-size: 30px 30px;
     pointer-events: none;
 }
 
-/* 主容器：控制台风格 */
 .container {
     width: 90%;
     max-width: 850px;
-    background: rgba(10, 10, 20, 0.4); /* 深色磨砂 */
+    background: rgba(10, 10, 20, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 45px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    /* 顶部有一条发光线 */
     border: 1px solid var(--glass-border);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     text-align: center;
     animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* 头像：增加呼吸灯效果 */
 .avatar img {
     width: 110px;
     height: 110px;
@@ -80,7 +81,7 @@ body {
     border: 3px solid rgba(255, 255, 255, 0.2);
     object-fit: cover;
     transition: all 0.5s ease;
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); /* 青色光晕 */
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
 .avatar img:hover {
@@ -89,26 +90,69 @@ body {
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.6);
 }
 
-h1 {
+/* --- 2. 补全：故障风文字 (Glitch Text) --- */
+h1.glitch-text {
     margin: 15px 0 5px;
     font-size: 2.2em;
     font-weight: 700;
     letter-spacing: 2px;
-    background: linear-gradient(to right, #fff, var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+    position: relative;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
 }
+
+/* 故障动画关键帧 */
+h1.glitch-text::before, h1.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.4); /* 背景色需与容器一致 */
+}
+
+h1.glitch-text::before {
+    left: 2px;
+    text-shadow: -1px 0 #ff00c1;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+h1.glitch-text::after {
+    left: -2px;
+    text-shadow: -1px 0 #00fff9;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+    0% { clip: rect(30px, 9999px, 10px, 0); }
+    5% { clip: rect(70px, 9999px, 90px, 0); }
+    10% { clip: rect(10px, 9999px, 60px, 0); }
+    15% { clip: rect(80px, 9999px, 30px, 0); }
+    20% { clip: rect(20px, 9999px, 70px, 0); }
+    100% { clip: rect(0, 0, 0, 0); }
+}
+
+@keyframes glitch-anim2 {
+    0% { clip: rect(10px, 9999px, 80px, 0); }
+    5% { clip: rect(90px, 9999px, 20px, 0); }
+    10% { clip: rect(50px, 9999px, 40px, 0); }
+    15% { clip: rect(20px, 9999px, 70px, 0); }
+    20% { clip: rect(60px, 9999px, 30px, 0); }
+    100% { clip: rect(0, 0, 0, 0); }
+}
+/* --- 故障风结束 --- */
 
 .hitokoto {
     font-size: 1rem;
     opacity: 0.8;
     margin-bottom: 35px;
-    font-family: 'JetBrains Mono', 'LXGW WenKai Screen', monospace; /* 代码风格字体 */
+    font-family: 'JetBrains Mono', 'LXGW WenKai Screen', monospace;
     color: #94a3b8;
 }
 
-/* --- 搜索框 (扁平化科技风) --- */
 .search-box {
     display: flex;
     justify-content: center;
@@ -192,6 +236,12 @@ h1 {
     font-size: 1rem;
     color: #fff;
     font-family: 'JetBrains Mono', monospace;
+    transition: box-shadow 0.3s; /* 增加输入框光晕过渡 */
+}
+
+/* 输入框聚焦时增加发光效果 */
+.search-box input:focus {
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.2);
 }
 
 .search-box input::placeholder { color: #64748b; }
@@ -202,8 +252,8 @@ h1 {
     border-radius: 0 8px 8px 0;
     border: 1px solid var(--glass-border);
     border-left: none;
-    background: var(--accent-cyan); /* 青色按钮 */
-    color: #0f172a; /* 深色文字 */
+    background: var(--accent-cyan);
+    color: #0f172a;
     cursor: pointer;
     transition: all 0.3s;
     font-size: 1.2rem;
@@ -214,7 +264,6 @@ h1 {
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
 }
 
-/* 卡片网格 (科技卡片) */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -229,7 +278,7 @@ h1 {
     text-decoration: none;
     color: #e2e8f0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent; /* 默认无边框 */
+    border: 1px solid transparent;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -238,24 +287,23 @@ h1 {
     overflow: hidden;
 }
 
-/* 悬停时的科技效果 */
 .card:hover {
     background: var(--hover-bg);
     transform: translateY(-5px);
-    border-color: rgba(6, 182, 212, 0.5); /* 悬停显示青色边框 */
+    border-color: rgba(6, 182, 212, 0.5);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(6, 182, 212, 0.1);
 }
 
 .card .icon {
     font-size: 2.2em;
     margin-bottom: 12px;
-    color: var(--accent-pink); /* 粉色图标 */
+    color: var(--accent-pink);
     text-shadow: 0 0 10px rgba(244, 114, 182, 0.4);
     transition: color 0.3s;
 }
 
 .card:hover .icon {
-    color: var(--accent-cyan); /* 悬停变青色 */
+    color: var(--accent-cyan);
     text-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
 }
 
@@ -264,11 +312,10 @@ h1 {
     font-size: 0.75em; 
     opacity: 0.6; 
     font-family: 'JetBrains Mono', monospace; 
-    text-transform: uppercase; /* 英文全大写 */
+    text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* 底部 */
 footer {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 25px;
@@ -289,7 +336,7 @@ footer {
     justify-content: center;
     width: 48px;
     height: 48px;
-    border-radius: 12px; /* 方形圆角更科技 */
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     color: #94a3b8;
     font-size: 1.5rem;
@@ -308,7 +355,7 @@ footer {
 #clock {
     font-size: 3em;
     font-family: 'DS-Digital', sans-serif;
-    color: var(--accent-cyan); /* 时钟用青色 */
+    color: var(--accent-cyan);
     text-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
     letter-spacing: 4px;
     margin-bottom: 5px;
