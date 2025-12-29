@@ -194,7 +194,8 @@ h1 {
 /* 卡片网格 */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* 核心改动：从 180px 改为 160px，以便在容器内一行放下4个卡片 */
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
