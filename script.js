@@ -26,7 +26,6 @@ function selectEngine(engineKey) {
     document.getElementById('current-engine-icon').className = engine.icon;
     document.getElementById('search-input').placeholder = engine.placeholder;
     toggleEngineMenu();
-    // 自动聚焦
     document.getElementById('search-input').focus();
 }
 function doSearch() {
@@ -38,7 +37,6 @@ document.addEventListener('click', function(e) {
     const menu = document.getElementById('engine-options');
     if (!selector.contains(e.target) && menu.classList.contains('show')) menu.classList.remove('show');
 });
-// 兼容性更好的 keydown
 document.getElementById('search-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') doSearch(); });
 
 // 3. 实时时钟 + 问候
@@ -65,22 +63,34 @@ function fetchHitokoto() {
         .catch(() => { document.getElementById('hitokoto_text').innerText = "System connected. Ready for input."; });
 }
 
-// 5. 天气 (已锁定：南京)
+// 5. 天气 (高德地图API - 已锁定：南京)
 function fetchWeather() {
     const statusDiv = document.getElementById('weather-status');
-    fetch('https://wttr.in/Nanjing?format=%l:+%c+%t&lang=zh')
-        .then(response => response.text())
+    
+    // 高德地图配置
+    const key = '02d4bd74cc1897fcb432cc2f77f15098';
+    const cityAdcode = '320100'; // 南京的城市编码
+    
+    // 请求高德天气接口 (Base类型返回实况天气)
+    fetch(`https://restapi.amap.com/v3/weather/weatherInfo?city=${cityAdcode}&key=${key}&extensions=base`)
+        .then(response => response.json())
         .then(data => {
-            statusDiv.innerText = data.trim();
+            if (data.status === '1' && data.lives && data.lives.length > 0) {
+                const live = data.lives[0];
+                // 格式化输出: 南京: 晴 25℃
+                statusDiv.innerText = `${live.city}: ${live.weather} ${live.temperature}℃`;
+            } else {
+                statusDiv.innerText = "Weather Unavailable";
+            }
         })
-        .catch(() => {
+        .catch(err => {
+            console.error("Amap Weather Error:", err);
             statusDiv.innerText = "Weather Offline";
         });
 }
 
 // 6. 自动获取 GitHub Star 数
 function fetchGithubStars() {
-    // 你的仓库地址
     fetch('https://api.github.com/repos/loong2004/my-nav-page')
         .then(response => response.json())
         .then(data => {
