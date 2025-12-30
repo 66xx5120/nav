@@ -1,3 +1,6 @@
+/* =================================================================
+   核心变量定义
+   ================================================================= */
 :root {
     --primary-bg: rgba(15, 23, 42, 0.6);
     --hover-bg: rgba(30, 41, 59, 0.8);
@@ -57,16 +60,16 @@ body {
     pointer-events: none;
 }
 
-/* 容器设置为相对定位，作为绝对定位元素的参考基准 */
+/* 容器设置为相对定位 */
 .container {
     position: relative;
     width: 90%;
-    max-width: 850px;
+    max-width: 900px; /* 稍微加宽一点，让一行放下4个更从容 */
     background: rgba(10, 10, 20, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
-    padding: 30px 45px;
+    padding: 30px 40px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--glass-border);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -160,28 +163,125 @@ h1 {
 }
 .search-box button:hover { background: #22d3ee; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
 
+/* =================================================================
+   【修正版】卡片布局：强制一行 (Grid 4 Columns)
+   ================================================================= */
 .cards-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px; margin-bottom: 30px;
+    display: grid;
+    /* 强制分为 4 列，不再自动换行 */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 15px; /* 间距稍微调小一点，防止太宽挤下去 */
+    margin-bottom: 30px;
+    width: 100%;
 }
-/* 卡片恢复为原先的样式 */
-.card {
-    background: var(--primary-bg); padding: 25px 15px; border-radius: 12px; text-decoration: none;
-    color: #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;
-}
-.card:hover {
-    background: var(--hover-bg); transform: translateY(-5px); border-color: rgba(6, 182, 212, 0.5);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(6, 182, 212, 0.1);
-}
-.card .icon {
-    font-size: 2.2em; margin-bottom: 12px; color: var(--accent-pink);
-    text-shadow: 0 0 10px rgba(244, 114, 182, 0.4); transition: color 0.3s;
-}
-.card:hover .icon { color: var(--accent-cyan); text-shadow: 0 0 15px rgba(6, 182, 212, 0.6); }
-.card h3 { font-size: 1.1em; margin-bottom: 5px; font-weight: 700; }
-.card p { font-size: 0.75em; opacity: 0.6; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
 
+/* =================================================================
+   【修正版】流光跑马灯卡片 (Running Light Border)
+   1. 尺寸缩小，防止排成两行
+   2. 动画改为细长光束旋转，实现“跑马灯”扫过边框的效果
+   ================================================================= */
+.card {
+    /* 基础布局 */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* 【修改】高度减小，更紧凑 */
+    height: 140px; 
+    
+    background: #07182E; /* 必须是深色底 */
+    border-radius: 16px;
+    overflow: hidden; 
+    text-decoration: none; 
+    color: #e2e8f0;
+    
+    /* 交互动效 */
+    transition: transform 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
+}
+
+/* --- 【核心修改】跑马灯光束 (::before) --- */
+/* 这里不再是一个大方块，而是一个细长的条，旋转时只有经过边缘才会亮 */
+.card::before {
+    content: '';
+    position: absolute;
+    
+    /* 宽度设置小一点，形成“光束” */
+    width: 80px; 
+    /* 高度拉长，超过卡片对角线长度 */
+    height: 160%; 
+    
+    /* 赛博配色渐变 */
+    background-image: linear-gradient(180deg, var(--accent-cyan), var(--accent-pink));
+    
+    /* 居中定位 */
+    top: 50%;
+    left: 50%;
+    
+    /* 动画：以中心为轴旋转 */
+    animation: rotBGimg 3s linear infinite;
+}
+
+@keyframes rotBGimg {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* --- 遮罩层 (::after) --- */
+/* 用深色背景盖住中间，只露出边缘被光束扫过的地方 */
+.card::after {
+    content: '';
+    position: absolute;
+    background: #07182E; 
+    /* 内缩 3px，这里的 3px 就是流光边框的粗细 */
+    inset: 3px; 
+    border-radius: 14px; 
+}
+
+/* --- 内容层 --- */
+.card .icon, 
+.card .info {
+    position: relative;
+    z-index: 5; /* 确保在遮罩层之上 */
+}
+
+/* 图标与文字样式微调 */
+.card .icon {
+    font-size: 2em; /* 稍微调小图标 */
+    margin-bottom: 8px;
+    color: var(--accent-cyan);
+    filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.4));
+    transition: color 0.3s;
+}
+
+.card h3 {
+    font-size: 1em; /* 稍微调小文字 */
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.card p {
+    font-size: 0.65em;
+    font-family: 'JetBrains Mono', monospace;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card:hover .icon {
+    color: var(--accent-pink);
+}
+
+/* GitHub 概览 */
 .github-section {
     margin-bottom: 30px;
     background: rgba(15, 23, 42, 0.4);
@@ -201,7 +301,7 @@ h1 {
 footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; font-size: 0.8rem; color: #64748b; }
 .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; }
 
-/* 底部图标按钮：增加相对定位和overflow隐藏，确保光效不溢出 */
+/* 底部图标按钮 */
 .social-links a {
     position: relative; overflow: hidden;
     display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
@@ -224,6 +324,7 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+/* APlayer 皮肤 */
 .aplayer {
     background: rgba(15, 23, 42, 0.85) !important;
     backdrop-filter: blur(10px) !important;
@@ -252,10 +353,9 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 .aplayer .aplayer-icon { color: #cbd5e1 !important; }
 
 /* =================================================================
-   GitHub Star 按钮 - 战术徽章版 (原生 CSS 复刻)
+   GitHub Star 按钮 - 右上角悬浮
    ================================================================= */
 .star-btn-container {
-    /* 默认电脑端：绝对定位到右上角 */
     position: absolute;
     top: 30px;
     right: 30px;
@@ -289,46 +389,14 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
     box-shadow: 0 0 0 2px #000, 0 0 0 4px rgba(0, 0, 0, 0.2);
 }
 
-.btn-left {
-    display: flex;
-    align-items: center;
-}
+.btn-left { display: flex; align-items: center; }
+.icon-github-logo { width: 14px; height: 14px; fill: currentColor; margin-right: 4px; }
+.btn-right { display: flex; align-items: center; gap: 4px; margin-left: 8px; padding-left: 8px; border-left: 1px solid rgba(255,255,255,0.2); }
+.icon-star-mini { width: 14px; height: 14px; color: #6b7280; transition: color 0.3s; }
+.github-star-btn:hover .icon-star-mini { color: #fde047; }
+.star-count { font-family: monospace; font-weight: bold; }
 
-.icon-github-logo {
-    width: 14px;
-    height: 14px;
-    fill: currentColor;
-    margin-right: 4px;
-}
-
-.btn-right {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: 8px;
-    padding-left: 8px;
-    border-left: 1px solid rgba(255,255,255,0.2);
-}
-
-.icon-star-mini {
-    width: 14px;
-    height: 14px;
-    color: #6b7280;
-    transition: color 0.3s;
-}
-
-.github-star-btn:hover .icon-star-mini {
-    color: #fde047;
-}
-
-.star-count {
-    font-family: monospace;
-    font-weight: bold;
-}
-
-/* =================================================================
-   通用扫光动画 (适用于 按钮、链接)
-   ================================================================= */
+/* 按钮的扫光动画 */
 .shine-effect {
     position: absolute;
     right: 0;
@@ -340,25 +408,28 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
     transform: translateX(48px) rotate(12deg);
     transition: all 1s ease-out;
     pointer-events: none;
-    z-index: 10; /* 确保光效在最上层 */
+    z-index: 10;
 }
-
-/* 触发条件：只保留 GitHub 按钮和社交链接的扫光 */
 .github-star-btn:hover .shine-effect,
 .social-links a:hover .shine-effect {
-    /* 位移距离保持 -500px 即可，足够覆盖这些小按钮 */
     transform: translateX(-500px) rotate(12deg);
 }
 
-/* 移动端适配 */
+/* =================================================================
+   【移动端适配】(针对卡片布局调整)
+   ================================================================= */
 @media (max-width: 600px) {
     .container { 
         width: 95%; 
         padding: 30px 20px;
-        /* 给顶部多留点空间，因为按钮现在是流式布局 */
         padding-top: 20px; 
     }
-    .cards-grid { grid-template-columns: 1fr; }
+    
+    /* 手机上卡片强制变成 2 列，防止太挤 */
+    .cards-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    
     .search-box input { width: 40%; }
 
     /* 手机上按钮回流到文档流中，居中显示 */
@@ -367,9 +438,5 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
         margin-bottom: 20px;
         width: 100%;
     }
-    
-    .github-star-btn {
-        width: auto;
-        margin: 0 auto;
-    }
+    .github-star-btn { width: auto; margin: 0 auto; }
 }
