@@ -61,10 +61,12 @@ body {
 }
 
 /* 容器设置为相对定位 */
+/* style.css */
+
 .container {
     position: relative;
     width: 90%;
-    max-width: 900px; /* 稍微加宽一点，让一行放下4个更从容 */
+    max-width: 1200px;  /* <--- 仅修改了这里，原为 900px */
     background: rgba(10, 10, 20, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
