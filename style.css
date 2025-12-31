@@ -136,8 +136,6 @@ h1 {
     margin-bottom: 30px;
     position: relative;
     z-index: 100;
-    
-    /* --- 核心修改：统一收窄至 850px --- */
     width: 100%;
     max-width: 850px; 
     margin-left: auto;
@@ -174,18 +172,14 @@ h1 {
 
 /* =================================================================
    卡片布局
-   关键点：限制最大宽度为 850px，并居中
    ================================================================= */
 .cards-grid {
     display: grid;
-    /* 保持 auto-fit，确保卡片平铺 */
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 15px; 
-    
-    /* --- 核心修改：收窄至 850px --- */
     width: 100%;
     max-width: 850px;  
-    margin: 0 auto 30px auto; /* 居中显示，两边自动留白 */
+    margin: 0 auto 30px auto; 
 }
 
 /* =================================================================
@@ -207,10 +201,7 @@ h1 {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
-}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); }
 
 .card::before {
     content: '';
@@ -236,12 +227,7 @@ h1 {
     border-radius: 14px; 
 }
 
-.card .icon, 
-.card .info {
-    position: relative;
-    z-index: 5; 
-}
-
+.card .icon, .card .info { position: relative; z-index: 5; }
 .card .icon {
     font-size: 2em; 
     margin-bottom: 8px;
@@ -249,73 +235,26 @@ h1 {
     filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.4));
     transition: color 0.3s;
 }
-
-.card h3 {
-    font-size: 1em; 
-    font-weight: 700;
-    margin-bottom: 2px;
-    color: #fff;
-    letter-spacing: 1px;
-}
-
-.card p {
-    font-size: 0.65em;
-    font-family: 'JetBrains Mono', monospace;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.card:hover .icon {
-    color: var(--accent-pink);
-}
+.card h3 { font-size: 1em; font-weight: 700; margin-bottom: 2px; color: #fff; letter-spacing: 1px; }
+.card p { font-size: 0.65em; font-family: 'JetBrains Mono', monospace; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+.card:hover .icon { color: var(--accent-pink); }
 
 /* =================================================================
    GitHub 概览
-   关键点：宽度 850px 居中 + 滤镜增强对比度
    ================================================================= */
 .github-section {
     background: rgba(15, 23, 42, 0.4);
     border-radius: 12px;
     padding: 15px;
     border: 1px solid var(--glass-border);
-    
-    /* --- 核心修改：收窄至 850px --- */
     width: 100%;
     max-width: 850px;
-    margin: 0 auto 30px auto; /* 居中显示 */
+    margin: 0 auto 30px auto; 
 }
-
-.section-title {
-    font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-
-.github-graph-container {
-    width: 100%; 
-    overflow: hidden; 
-    display: flex; 
-    justify-content: center;
-    /* --- 核心修改：移除透明度，避免发灰 --- */
-    opacity: 1; 
-}
-
-.gh-chart { 
-    max-width: 100%; 
-    height: auto;
-    
-    /* --- 核心修改：增强滤镜 --- */
-    /* contrast: 提高方块边缘清晰度 */
-    /* saturate: 让青色更鲜艳 */
-    /* brightness: 稍微提亮整体 */
-    filter: contrast(1.5) saturate(1.5) brightness(1.1);
-    
-    transition: filter 0.3s ease;
-}
-
-/* 鼠标悬停时特效 */
-.github-section:hover .gh-chart {
-    filter: contrast(1.6) saturate(1.8) brightness(1.2);
-}
+.section-title { font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.github-graph-container { width: 100%; overflow: hidden; display: flex; justify-content: center; opacity: 1; }
+.gh-chart { max-width: 100%; height: auto; filter: contrast(1.5) saturate(1.5) brightness(1.1); transition: filter 0.3s ease; }
+.github-section:hover .gh-chart { filter: contrast(1.6) saturate(1.8) brightness(1.2); }
 
 footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; font-size: 0.8rem; color: #64748b; }
 
@@ -331,158 +270,50 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
 /* =================================================================
-   APlayer 赛博朋克战术皮肤 (已重构)
+   APlayer 赛博朋克战术皮肤
    ================================================================= */
 .aplayer {
-    background: rgba(5, 8, 16, 0.95) !important; /* 极深色背景，接近全黑 */
+    background: rgba(5, 8, 16, 0.95) !important;
     backdrop-filter: blur(20px) !important;
     border: none !important;
-    border-left: 3px solid var(--accent-cyan) !important; /* 左侧能量条 */
-    border-radius: 4px !important; /* 减少圆角，更硬朗 */
+    border-left: 3px solid var(--accent-cyan) !important;
+    border-radius: 4px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), -2px 0 15px rgba(6, 182, 212, 0.2) !important;
     color: #e2e8f0 !important;
-    font-family: 'JetBrains Mono', 'DS-Digital', monospace !important; /* 强制终端字体 */
+    font-family: 'JetBrains Mono', 'DS-Digital', monospace !important;
     margin: 0 !important;
     z-index: 9999;
-    max-width: 400px; /* 限制最大宽度，更精致 */
+    max-width: 400px;
 }
-
-/* 收起状态的小浮窗 */
 .aplayer.aplayer-fixed .aplayer-body {
     background: rgba(5, 8, 16, 0.95) !important;
     border: 1px solid rgba(6, 182, 212, 0.3) !important;
     box-shadow: 0 0 10px rgba(6, 182, 212, 0.2) !important;
 }
-
-/* 歌曲列表区域 */
-.aplayer .aplayer-list {
-    border-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.aplayer .aplayer-list ol li { 
-    border-top: 1px solid rgba(255,255,255,0.02) !important;
-    transition: all 0.2s ease !important;
-    position: relative;
-}
-
-/* 列表悬停 - 扫描线效果 */
-.aplayer .aplayer-list ol li:hover { 
-    background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent) !important;
-    padding-left: 20px !important; /* 悬停时文字右移 */
-}
-.aplayer .aplayer-list ol li:hover::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 8px var(--accent-cyan);
-}
-
-/* 当前播放曲目 - 高亮状态 */
-.aplayer .aplayer-list ol li.aplayer-list-light { 
-    background: rgba(6, 182, 212, 0.05) !important; 
-}
-.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-title { 
-    color: var(--accent-cyan) !important; 
-    text-shadow: 0 0 5px rgba(6, 182, 212, 0.6);
-}
-.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-author { 
-    color: var(--accent-pink) !important; 
-}
-
-/* 文本信息 */
-.aplayer .aplayer-info { 
-    border-bottom: 1px solid rgba(255,255,255,0.05) !important; 
-    padding: 15px 10px !important;
-}
-.aplayer .aplayer-info .aplayer-music .aplayer-title { 
-    color: #fff !important; 
-    font-size: 15px !important;
-    font-weight: bold;
-}
-.aplayer .aplayer-info .aplayer-music .aplayer-author { 
-    color: #64748b !important; 
-    font-size: 12px !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* 进度条 - 激光效果 */
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
-    height: 4px !important;
-    background: rgba(255,255,255,0.1) !important;
-    border-radius: 2px !important;
-}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
-    background: rgba(255,255,255,0.2) !important;
-    height: 4px !important;
-}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played { 
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink)) !important; 
-    height: 4px !important;
-    box-shadow: 0 0 10px var(--accent-cyan) !important; /* 进度条发光 */
-    border-radius: 2px !important;
-}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb { 
-    background: #fff !important; 
-    border: none !important;
-    width: 12px !important;
-    height: 12px !important;
-    box-shadow: 0 0 10px #fff, 0 0 20px var(--accent-pink) !important; /* 拖动点高亮 */
-    margin-top: -4px !important;
-    transform: scale(0.8) !important;
-}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb:hover {
-    transform: scale(1.2) !important;
-}
-
-/* 歌词区域 */
-.aplayer .aplayer-lrc {
-    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    margin: 4px 0 !important;
-}
-.aplayer .aplayer-lrc:before, .aplayer .aplayer-lrc:after { 
-    background: none !important; /* 去除原有遮罩 */
-}
-.aplayer .aplayer-lrc p { 
-    color: rgba(255,255,255,0.4) !important; 
-    font-size: 12px !important;
-    font-family: 'LXGW WenKai Screen', sans-serif !important; /* 歌词保持中文手写体 */
-    line-height: 16px !important;
-    opacity: 0.6;
-}
-.aplayer .aplayer-lrc p.aplayer-lrc-current { 
-    color: var(--accent-cyan) !important; 
-    font-size: 14px !important; 
-    font-weight: bold;
-    opacity: 1;
-    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6) !important; /* 当前歌词发光 */
-    transform: scale(1.05);
-    transition: all 0.3s ease;
-}
-
-/* 控制按钮 */
-.aplayer .aplayer-icon { 
-    color: rgba(255,255,255,0.6) !important; 
-    transition: all 0.3s !important;
-}
-.aplayer .aplayer-icon:hover { 
-    color: var(--accent-cyan) !important;
-    filter: drop-shadow(0 0 5px var(--accent-cyan));
-}
-.aplayer .aplayer-icon-menu {
-    display: block !important; /* 强制显示菜单按钮 */
-}
-
-/* 封面图旋转效果 */
-.aplayer .aplayer-pic {
-    border: 2px solid rgba(255,255,255,0.1);
-    transition: border-color 0.3s;
-}
-.aplayer .aplayer-pic:hover {
-    border-color: var(--accent-cyan);
-}
+.aplayer .aplayer-list { border-color: rgba(255, 255, 255, 0.05) !important; }
+.aplayer .aplayer-list ol li { border-top: 1px solid rgba(255,255,255,0.02) !important; transition: all 0.2s ease !important; position: relative; }
+.aplayer .aplayer-list ol li:hover { background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent) !important; padding-left: 20px !important; }
+.aplayer .aplayer-list ol li:hover::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); }
+.aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(6, 182, 212, 0.05) !important; }
+.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-title { color: var(--accent-cyan) !important; text-shadow: 0 0 5px rgba(6, 182, 212, 0.6); }
+.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-author { color: var(--accent-pink) !important; }
+.aplayer .aplayer-info { border-bottom: 1px solid rgba(255,255,255,0.05) !important; padding: 15px 10px !important; }
+.aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 15px !important; font-weight: bold; }
+.aplayer .aplayer-info .aplayer-music .aplayer-author { color: #64748b !important; font-size: 12px !important; text-transform: uppercase; letter-spacing: 1px; }
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar { height: 4px !important; background: rgba(255,255,255,0.1) !important; border-radius: 2px !important; }
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded { background: rgba(255,255,255,0.2) !important; height: 4px !important; }
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink)) !important; height: 4px !important; box-shadow: 0 0 10px var(--accent-cyan) !important; border-radius: 2px !important; }
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb { background: #fff !important; border: none !important; width: 12px !important; height: 12px !important; box-shadow: 0 0 10px #fff, 0 0 20px var(--accent-pink) !important; margin-top: -4px !important; transform: scale(0.8) !important; }
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb:hover { transform: scale(1.2) !important; }
+.aplayer .aplayer-lrc { text-shadow: 0 2px 5px rgba(0,0,0,0.5); margin: 4px 0 !important; }
+.aplayer .aplayer-lrc:before, .aplayer .aplayer-lrc:after { background: none !important; }
+.aplayer .aplayer-lrc p { color: rgba(255,255,255,0.4) !important; font-size: 12px !important; font-family: 'LXGW WenKai Screen', sans-serif !important; line-height: 16px !important; opacity: 0.6; }
+.aplayer .aplayer-lrc p.aplayer-lrc-current { color: var(--accent-cyan) !important; font-size: 14px !important; font-weight: bold; opacity: 1; text-shadow: 0 0 10px rgba(6, 182, 212, 0.6) !important; transform: scale(1.05); transition: all 0.3s ease; }
+.aplayer .aplayer-icon { color: rgba(255,255,255,0.6) !important; transition: all 0.3s !important; }
+.aplayer .aplayer-icon:hover { color: var(--accent-cyan) !important; filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+.aplayer .aplayer-icon-menu { display: block !important; }
+.aplayer .aplayer-pic { border: 2px solid rgba(255,255,255,0.1); transition: border-color 0.3s; }
+.aplayer .aplayer-pic:hover { border-color: var(--accent-cyan); }
 
 /* =================================================================
    GitHub Star 按钮 - 右上角悬浮
@@ -541,13 +372,8 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
     pointer-events: none;
     z-index: 10;
 }
-.github-star-btn:hover .shine-effect {
-    transform: translateX(-500px) rotate(12deg);
-}
+.github-star-btn:hover .shine-effect { transform: translateX(-500px) rotate(12deg); }
 
-/* =================================================================
-   右下角固定 3D 图标
-   ================================================================= */
 /* =================================================================
    右下角固定图标 (严格引用 Uiverse 原始样式)
    ================================================================= */
@@ -625,23 +451,101 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
    移动端适配
    ================================================================= */
 @media (max-width: 600px) {
-    .container { 
-        width: 95%; 
-        padding: 30px 20px;
-        padding-top: 20px; 
-    }
-    
-    .cards-grid { 
-        /* 手机上强制 2 列 */
-        grid-template-columns: repeat(2, 1fr); 
-    }
-    
+    .container { width: 95%; padding: 30px 20px; padding-top: 20px; }
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
     .search-box input { width: 40%; }
-
-    .star-btn-container {
-        position: static;
-        margin-bottom: 20px;
-        width: 100%;
-    }
+    .star-btn-container { position: static; margin-bottom: 20px; width: 100%; }
     .github-star-btn { width: auto; margin: 0 auto; }
+}
+
+/* =================================================================
+   Preloader (预加载动画)
+   ================================================================= */
+
+/* 全屏遮罩容器 */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0f172a; 
+    z-index: 9999; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* From Uiverse.io by alexruix */ 
+.loader {
+  width: 80px;
+  height: 50px;
+  position: relative;
+  /* ================= 修改点 ================= */
+  transform: scale(2.5); /* 放大 2.5 倍，现在非常明显了 */
+  /* ========================================== */
+}
+
+.loader-text {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  color: #C8B6FF;
+  animation: text_713 3.5s ease both infinite;
+  font-size: .8rem;
+  letter-spacing: 1px;
+}
+
+.load {
+  background-color: #9A79FF;
+  border-radius: 50px;
+  display: block;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  position: absolute;
+  transform: translateX(64px);
+  animation: loading_713 3.5s ease both infinite;
+}
+
+.load::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #D1C2FF;
+  border-radius: inherit;
+  animation: loading2_713 3.5s ease both infinite;
+}
+
+@keyframes text_713 {
+  0% { letter-spacing: 1px; transform: translateX(0px); }
+  40% { letter-spacing: 2px; transform: translateX(26px); }
+  80% { letter-spacing: 1px; transform: translateX(32px); }
+  90% { letter-spacing: 2px; transform: translateX(0px); }
+  100% { letter-spacing: 1px; transform: translateX(0px); }
+}
+
+@keyframes loading_713 {
+  0% { width: 16px; transform: translateX(0px); }
+  40% { width: 100%; transform: translateX(0px); }
+  80% { width: 16px; transform: translateX(64px); }
+  90% { width: 100%; transform: translateX(0px); }
+  100% { width: 16px; transform: translateX(0px); }
+}
+
+@keyframes loading2_713 {
+  0% { transform: translateX(0px); width: 16px; }
+  40% { transform: translateX(0%); width: 80%; }
+  80% { width: 100%; transform: translateX(0px); }
+  90% { width: 80%; transform: translateX(15px); }
+  100% { transform: translateX(0px); width: 16px; }
 }

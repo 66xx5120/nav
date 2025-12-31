@@ -9,7 +9,7 @@ function setRandomBackground() {
     img.onload = function() { background.style.backgroundImage = `url('${finalUrl}')`; };
 }
 
-// 2. 搜索配置 (新增：Tab 键循环切换)
+// 2. 搜索配置 (Tab 键循环切换)
 const searchEngines = {
     google: { url: "https://www.google.com/search?q=", icon: "fab fa-google", placeholder: "Search with Google..." },
     baidu: { url: "https://www.baidu.com/s?wd=", icon: "fas fa-paw", placeholder: "百度一下，你就知道" },
@@ -93,7 +93,6 @@ function fetchHitokoto() {
 
 
 // 5. 天气 (高德定位 -> 高德天气 -> 心知备用)
-// 逻辑非常稳健，无需修改，建议去高德控制台绑定域名
 function fetchWeather() {
     const statusDiv = document.getElementById('weather-status');
 
@@ -168,7 +167,7 @@ function fetchWeather() {
 }
 
 
-// 6. 自动获取 GitHub Star 数 (优化：增加状态判断)
+// 6. 自动获取 GitHub Star 数
 function fetchGithubStars() {
     const starCountElem = document.getElementById('github-star-count');
     
@@ -191,11 +190,26 @@ function fetchGithubStars() {
         })
         .catch(err => {
             console.warn("GitHub Star fetch failed:", err.message);
-            // 失败时显示特定的错误标记，或者保持默认
             starCountElem.innerText = "N/A";
             starCountElem.title = "GitHub API Rate Limit or Network Error";
         });
 }
+
+// 7. 新增：预加载控制 (System Initialization)
+window.addEventListener('load', function() {
+    const loader = document.getElementById('preloader');
+    
+    // 设置一个最小展示时间，防止加载太快导致动画一闪而过
+    // 这里设置 1500毫秒 (1.5秒)，你可以根据需要调整
+    setTimeout(function() {
+        loader.classList.add('hidden');
+        
+        // 动画结束后彻底移除元素，释放内存
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 500); // 配合 CSS transition 的 0.5s
+    }, 1500);
+});
 
 // 初始化
 setRandomBackground();
