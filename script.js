@@ -195,7 +195,87 @@ function fetchGithubStars() {
         });
 }
 
-// 7. 新增：预加载控制 (System Initialization)
+// 7. 网络状态监控 (仅保留 Latency Matrix)
+function checkNetworkStatus() {
+    
+    // === Part B: Latency Matrix ===
+    const targets = [
+        { id: 'bytedance', url: 'https://www.douyin.com/favicon.ico' },
+        { id: 'bilibili', url: 'https://www.bilibili.com/favicon.ico' },
+        { id: 'wechat', url: 'https://weixin.qq.com/favicon.ico' },
+        { id: 'taobao', url: 'https://www.taobao.com/favicon.ico' },
+        { id: 'github', url: 'https://github.com/favicon.ico' },
+        { id: 'jsdelivr', url: 'https://cdn.jsdelivr.net/favicon.ico' },
+        { id: 'cloudflare', url: 'https://www.cloudflare.com/favicon.ico' },
+        { id: 'youtube', url: 'https://www.youtube.com/favicon.ico' }
+    ];
+
+    // 辅助函数: 生成信号灯 HTML
+    const renderStatusDots = (latency) => {
+        let colorClass = 'green';
+        let activeCount = 6;
+
+        if (latency === -1) { // Timeout/Error
+            colorClass = 'red';
+            activeCount = 0;
+        } else if (latency < 100) {
+            colorClass = 'green';
+            activeCount = 6;
+        } else if (latency < 250) {
+            colorClass = 'yellow';
+            activeCount = 4;
+        } else {
+            colorClass = 'red';
+            activeCount = 2;
+        }
+
+        let html = '';
+        for (let i = 0; i < 6; i++) {
+            // 前 activeCount 个点是亮色的，剩下的是灰色的(默认背景色)
+            const isActive = i < activeCount;
+            const className = isActive ? `dot ${colorClass}` : 'dot';
+            html += `<div class="${className}"></div>`;
+        }
+        return { html, colorClass };
+    };
+
+    targets.forEach(target => {
+        const textElem = document.getElementById(`ping-${target.id}`);
+        const dotsElem = document.getElementById(`status-${target.id}`);
+        
+        const start = performance.now();
+        const timeout = 5000;
+        
+        // 使用 no-cors 模式发出请求，只为了测速
+        // 添加时间戳防止缓存
+        const request = fetch(`${target.url}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store' });
+        
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
+
+        Promise.race([request, timeoutPromise])
+            .then(() => {
+                const end = performance.now();
+                const latency = Math.round(end - start);
+                
+                // 更新文字
+                textElem.innerText = `${latency}ms`;
+                
+                // 生成并更新信号灯
+                const status = renderStatusDots(latency);
+                dotsElem.innerHTML = status.html;
+                
+                // 更新文字颜色
+                textElem.className = `net-latency text-${status.colorClass}`;
+            })
+            .catch(() => {
+                textElem.innerText = 'Timeout';
+                textElem.className = 'net-latency text-red';
+                dotsElem.innerHTML = renderStatusDots(-1).html;
+            });
+    });
+}
+
+// 8. 预加载控制 (System Initialization)
 window.addEventListener('load', function() {
     const loader = document.getElementById('preloader');
     
@@ -218,6 +298,7 @@ updateClock();
 fetchHitokoto();
 fetchWeather();
 fetchGithubStars();
+checkNetworkStatus(); // 启动网络监测
 
 // 打印个酷一点的 Console 欢迎语
 console.log(
