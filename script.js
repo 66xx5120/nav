@@ -1,4 +1,4 @@
-// 1. 随机二次元背景 (保持不变，逻辑很完美)
+// 1. 随机二次元背景
 function setRandomBackground() {
     const baseUrl = "https://api.paugram.com/wallpaper/";
     const timestamp = new Date().getTime();
@@ -67,7 +67,7 @@ document.getElementById('search-input').addEventListener('keydown', function (e)
     }
 });
 
-// 3. 实时时钟 + 问候 (保持不变)
+// 3. 实时时钟 + 问候
 function updateClock() {
     const now = new Date();
     document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN', { hour12: false });
@@ -83,7 +83,7 @@ function updateClock() {
     document.getElementById('greeting').innerText = greeting;
 }
 
-// 4. 一言 API (保持不变)
+// 4. 一言 API
 function fetchHitokoto() {
     fetch('https://v1.hitokoto.cn/?c=a&c=b')
         .then(response => response.json())
@@ -195,29 +195,49 @@ function fetchGithubStars() {
         });
 }
 
-// 7. 网络状态监控 (仅保留 Latency Matrix)
+// 7. 网络状态监控 (Refined: 动态生成 + 实时心跳 + 呼吸感监测)
 function checkNetworkStatus() {
+    const grid = document.getElementById('network-grid');
     
-    // === Part B: Latency Matrix ===
+    // 配置列表
     const targets = [
-        { id: 'bytedance', url: 'https://www.douyin.com/favicon.ico' },
-        { id: 'bilibili', url: 'https://www.bilibili.com/favicon.ico' },
-        { id: 'wechat', url: 'https://weixin.qq.com/favicon.ico' },
-        { id: 'taobao', url: 'https://www.taobao.com/favicon.ico' },
-        { id: 'github', url: 'https://github.com/favicon.ico' },
-        { id: 'jsdelivr', url: 'https://cdn.jsdelivr.net/favicon.ico' },
-        { id: 'cloudflare', url: 'https://www.cloudflare.com/favicon.ico' },
-        { id: 'youtube', url: 'https://www.youtube.com/favicon.ico' }
+        { id: 'bytedance', name: '字节跳动', icon: 'fab fa-tiktok', type: 'cn', url: 'https://www.douyin.com/favicon.ico' },
+        { id: 'bilibili', name: 'Bilibili', icon: 'fab fa-bilibili', type: 'cn', url: 'https://www.bilibili.com/favicon.ico' },
+        { id: 'wechat', name: '微信', icon: 'fab fa-weixin', type: 'cn', url: 'https://weixin.qq.com/favicon.ico' },
+        { id: 'taobao', name: '淘宝', icon: 'fas fa-shopping-bag', type: 'cn', url: 'https://www.taobao.com/favicon.ico' },
+        { id: 'github', name: 'GitHub', icon: 'fab fa-github', type: 'intl', url: 'https://github.com/favicon.ico' },
+        { id: 'jsdelivr', name: 'jsDelivr', icon: 'fas fa-cube', type: 'intl', url: 'https://cdn.jsdelivr.net/favicon.ico' },
+        { id: 'cloudflare', name: 'Cloudflare', icon: 'fas fa-cloud', type: 'intl', url: 'https://www.cloudflare.com/favicon.ico' },
+        { id: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', type: 'intl', url: 'https://www.youtube.com/favicon.ico' }
     ];
 
-    // 辅助函数: 生成信号灯 HTML
-    const renderStatusDots = (latency) => {
+    // 1. 动态生成卡片 (DRY)
+    if (grid) {
+        grid.innerHTML = targets.map(t => `
+            <div class="net-card">
+                <div class="net-header">
+                    <span class="net-icon"><i class="${t.icon}"></i> ${t.name}</span>
+                    <span class="net-badge badge-${t.type}">${t.type === 'cn' ? '国内' : '国际'}</span>
+                </div>
+                <div class="net-body">
+                    <span class="net-latency" id="ping-${t.id}">WAIT</span>
+                    <div class="status-dots" id="status-${t.id}">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 2. 渲染信号灯 (Helper)
+    const renderStatusDots = (latency, elem) => {
         let colorClass = 'green';
         let activeCount = 6;
 
         if (latency === -1) { // Timeout/Error
             colorClass = 'red';
-            activeCount = 0;
+            activeCount = 1;
         } else if (latency < 100) {
             colorClass = 'green';
             activeCount = 6;
@@ -231,68 +251,91 @@ function checkNetworkStatus() {
 
         let html = '';
         for (let i = 0; i < 6; i++) {
-            // 前 activeCount 个点是亮色的，剩下的是灰色的(默认背景色)
             const isActive = i < activeCount;
             const className = isActive ? `dot ${colorClass}` : 'dot';
             html += `<div class="${className}"></div>`;
         }
-        return { html, colorClass };
+        elem.innerHTML = html;
+        return colorClass;
     };
 
-    targets.forEach(target => {
+    // 3. 核心测速函数 (单次)
+    const pingTarget = async (target) => {
         const textElem = document.getElementById(`ping-${target.id}`);
         const dotsElem = document.getElementById(`status-${target.id}`);
-        
-        const start = performance.now();
-        const timeout = 5000;
-        
-        // 使用 no-cors 模式发出请求，只为了测速
-        // 添加时间戳防止缓存
-        const request = fetch(`${target.url}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store' });
-        
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
+        if (!textElem || !dotsElem) return;
 
-        Promise.race([request, timeoutPromise])
-            .then(() => {
-                const end = performance.now();
-                const latency = Math.round(end - start);
-                
-                // 更新文字
-                textElem.innerText = `${latency}ms`;
-                
-                // 生成并更新信号灯
-                const status = renderStatusDots(latency);
-                dotsElem.innerHTML = status.html;
-                
-                // 更新文字颜色
-                textElem.className = `net-latency text-${status.colorClass}`;
-            })
-            .catch(() => {
-                textElem.innerText = 'Timeout';
-                textElem.className = 'net-latency text-red';
-                dotsElem.innerHTML = renderStatusDots(-1).html;
+        const start = performance.now();
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3秒超时
+
+        try {
+            // mode: 'no-cors' 是必须的，cache: 'no-store' 加上时间戳强制不缓存
+            await fetch(`${target.url}?t=${Date.now()}`, { 
+                mode: 'no-cors', 
+                cache: 'no-store',
+                signal: controller.signal 
             });
+            
+            clearTimeout(timeoutId);
+            const end = performance.now();
+            // 增加随机抖动(0-5ms)，模拟真实波动
+            const jitter = Math.floor(Math.random() * 5); 
+            const latency = Math.round(end - start) + jitter;
+
+            textElem.innerText = `${latency}ms`;
+            const color = renderStatusDots(latency, dotsElem);
+            textElem.className = `net-latency text-${color}`;
+
+        } catch (error) {
+            textElem.innerText = 'OFF';
+            textElem.className = 'net-latency text-red';
+            renderStatusDots(-1, dotsElem);
+        }
+    };
+
+    // 4. 启动无限循环 (Heartbeat Loop)
+    targets.forEach(target => {
+        const loop = async () => {
+            await pingTarget(target);
+            
+            // 随机间隔 1.5s 到 3.5s，让由于网络波动造成的数值跳动看起来“此起彼伏”
+            const nextDelay = Math.floor(Math.random() * 2000) + 1500; 
+            setTimeout(loop, nextDelay);
+        };
+        
+        // 错峰启动，防止页面刚加载时瞬间卡顿
+        setTimeout(loop, Math.random() * 1000);
     });
 }
 
-// 8. 预加载控制 (System Initialization)
-window.addEventListener('load', function() {
+// 8. 极速预加载控制 (System Initialization - Turbo Mode)
+// 修正逻辑：DOM 准备好立刻显示，不再等待所有资源加载完毕
+document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('preloader');
     
-    // 设置一个最小展示时间，防止加载太快导致动画一闪而过
-    // 这里设置 1500毫秒 (1.5秒)，你可以根据需要调整
+    // 300ms 极短缓冲，仅为了平滑过渡，消除 1.5s 的人为卡顿
     setTimeout(function() {
         loader.classList.add('hidden');
         
         // 动画结束后彻底移除元素，释放内存
         setTimeout(() => {
             loader.style.display = 'none';
-        }, 500); // 配合 CSS transition 的 0.5s
-    }, 1500);
+        }, 500); 
+    }, 300); 
+});
+
+// 兜底策略：以防 DOMContentLoaded 未触发
+window.addEventListener('load', function() {
+    const loader = document.getElementById('preloader');
+    if (loader && !loader.classList.contains('hidden')) {
+        loader.classList.add('hidden');
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
+    }
 });
 
 // 初始化
-setRandomBackground();
+setRandomBackground(); // 立即执行，后台加载背景
 setInterval(updateClock, 1000);
 updateClock();
 fetchHitokoto();
@@ -300,9 +343,8 @@ fetchWeather();
 fetchGithubStars();
 checkNetworkStatus(); // 启动网络监测
 
-// 打印个酷一点的 Console 欢迎语
 console.log(
-    "%c Loong's Terminal %c System Online ",
+    "%c Loong's Terminal %c System Ready ",
     "background:#06b6d4; color:#000; font-weight:bold; border-radius: 4px 0 0 4px; padding: 4px;",
     "background:#0f172a; color:#06b6d4; font-weight:bold; border: 1px solid #06b6d4; border-radius: 0 4px 4px 0; padding: 3px;"
 );
