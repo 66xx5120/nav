@@ -1,12 +1,23 @@
-// 1. 随机二次元背景
-function setRandomBackground() {
-    const baseUrl = "https://api.paugram.com/wallpaper/";
-    const timestamp = new Date().getTime();
-    const finalUrl = `${baseUrl}?t=${timestamp}`;
+// 1. 背景设置 (优化版：改为固定高速 CDN 壁纸，提升加载速度)
+function setFixedBackground() {
+    // 选用了一张深色系、科技感强的“地球网络”壁纸，非常契合“终端”主题
+    // 使用 Unsplash 的 auto=format (WebP) 和 q=80 参数进行极致压缩
+    const bgUrl = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop";
+    
     const background = document.querySelector('.background');
     const img = new Image();
-    img.src = finalUrl;
-    img.onload = function() { background.style.backgroundImage = `url('${finalUrl}')`; };
+    
+    // 预加载逻辑：图片加载成功后才替换背景，避免闪屏
+    img.src = bgUrl;
+    img.onload = function() {
+        background.style.backgroundImage = `url('${bgUrl}')`;
+        background.style.opacity = '1'; // 确保 CSS 中如果有 opacity 过渡能生效
+    };
+    
+    // 兜底：如果图片加载极快或缓存了，直接显示
+    if (img.complete) {
+        background.style.backgroundImage = `url('${bgUrl}')`;
+    }
 }
 
 // 2. 搜索配置 (Tab 键循环切换)
@@ -335,7 +346,7 @@ window.addEventListener('load', function() {
 });
 
 // 初始化
-setRandomBackground(); // 立即执行，后台加载背景
+setFixedBackground(); // 改名调用新函数：设置固定背景
 setInterval(updateClock, 1000);
 updateClock();
 fetchHitokoto();
