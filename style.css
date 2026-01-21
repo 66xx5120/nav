@@ -69,7 +69,6 @@ body {
 .container {
     position: relative;
     width: 90%;
-    /* 保持 1200px，确保毛玻璃背景足够大气 */
     max-width: 1200px;  
     background: rgba(10, 10, 20, 0.4);
     backdrop-filter: blur(20px);
@@ -241,23 +240,6 @@ h1 {
 .card h3 { font-size: 1em; font-weight: 700; margin-bottom: 2px; color: #fff; letter-spacing: 1px; }
 .card p { font-size: 0.65em; font-family: 'JetBrains Mono', monospace; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
 .card:hover .icon { color: var(--accent-pink); }
-
-/* =================================================================
-   GitHub 概览
-   ================================================================= */
-.github-section {
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 12px;
-    padding: 15px;
-    border: 1px solid var(--glass-border);
-    width: 100%;
-    max-width: 850px;
-    margin: 0 auto 30px auto; 
-}
-.section-title { font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.github-graph-container { width: 100%; overflow: hidden; display: flex; justify-content: center; opacity: 1; }
-.gh-chart { max-width: 100%; height: auto; filter: contrast(1.5) saturate(1.5) brightness(1.1); transition: filter 0.3s ease; }
-.github-section:hover .gh-chart { filter: contrast(1.6) saturate(1.8) brightness(1.2); }
 
 footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; font-size: 0.8rem; color: #64748b; }
 
@@ -451,78 +433,6 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 }
 
 /* =================================================================
-   Network Monitor (新功能区域)
-   ================================================================= */
-.network-section {
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid var(--glass-border);
-    width: 100%;
-    max-width: 850px;
-    margin: 0 auto 30px auto;
-}
-
-/* Connectivity Grid */
-.connectivity-grid {
-    display: grid;
-    /* 强制一行4个 */
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-}
-
-.net-card {
-    background: rgba(15, 23, 42, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.03);
-    border-radius: 6px;
-    padding: 12px;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.net-card:hover {
-    background: rgba(30, 41, 59, 0.5);
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.net-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.net-icon { font-size: 0.9rem; color: #e2e8f0; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-.net-badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 10px; font-weight: 700; border: 1px solid; }
-
-.badge-cn { color: #60a5fa; border-color: #60a5fa; background: rgba(96, 165, 250, 0.1); }
-.badge-intl { color: #34d399; border-color: #34d399; background: rgba(52, 211, 153, 0.1); }
-
-.net-body {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.net-latency { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: bold; }
-
-/* Status Dots Bar (信号灯) */
-.status-dots { display: flex; gap: 3px; }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; transition: background 0.3s; }
-
-/* 颜色状态类 */
-.text-green { color: var(--status-green); }
-.text-yellow { color: var(--status-yellow); }
-.text-red { color: var(--status-red); }
-
-.dot.green { background: var(--status-green); box-shadow: 0 0 5px var(--status-green); }
-.dot.yellow { background: var(--status-yellow); box-shadow: 0 0 5px var(--status-yellow); }
-.dot.red { background: var(--status-red); box-shadow: 0 0 5px var(--status-red); }
-
-/* =================================================================
    移动端适配
    ================================================================= */
 @media (max-width: 600px) {
@@ -531,9 +441,6 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
     .search-box input { width: 40%; }
     .star-btn-container { position: static; margin-bottom: 20px; width: 100%; }
     .github-star-btn { width: auto; margin: 0 auto; }
-    
-    /* 移动端强制变成2列，防止挤压 */
-    .connectivity-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* =================================================================
@@ -566,9 +473,7 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
   width: 80px;
   height: 50px;
   position: relative;
-  /* ================= 修改点 ================= */
-  transform: scale(2.5); /* 放大 2.5 倍，现在非常明显了 */
-  /* ========================================== */
+  transform: scale(2.5);
 }
 
 .loader-text {
