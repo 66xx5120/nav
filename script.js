@@ -1,82 +1,89 @@
 /**
- * 设置随机背景图（使用代理解决Cloudflare拦截问题）
+ * 设置随机背景图
+ * 包含多个API源和错误处理机制
  */
 function setRandomBackground() {
-    // 代理服务器配置
-    const PROXY_SERVER = "https://cors-anywhere.herokuapp.com/"; // 公共代理示例
-    // 或者使用自己的代理： "https://your-proxy-server.com/?url=";
-
-    // 可用API源列表（已过滤可能被拦截的源）
+    // 可用API源列表
     const backgroundAPIs = [
-        "https://api.btstu.cn/sjbz/?lx=m_heisi",
-        "https://api.btstu.cn/sjbz/?lx=m_siwameitui",
-        "https://api.btstu.cn/sjbz/?lx=meizi",
-        "https://api.yimian.xyz/img?type=heisi",
-        "https://api.qingyun8.cn/api/sjbz/?type=siwa",
-        "https://api.qingyun8.cn/api/sjbz/?type=meizi",
-        "https://pic.re/image",
-        "https://api.waifu.pics/sfw/waifu",
+        // 国内稳定源
+        "https://api.btstu.cn/sjbz/?lx=m_heisi",          // 黑丝专题
+        "https://api.btstu.cn/sjbz/?lx=m_siwameitui",     // 丝袜美腿
+        "https://api.btstu.cn/sjbz/?lx=meizi",            // 随机美女
+        "https://api.btstu.cn/sjbz/?lx=m_dongman",        // 动漫风格
+        "https://api.yimian.xyz/img?type=heisi",          // 黑丝API
+        "https://api.qingyun8.cn/api/sjbz/?type=siwa",    // 丝袜专题
+        "https://api.qingyun8.cn/api/sjbz/?type=meizi",   // 高清美女
+        // 国际源
+        "https://pic.re/image",                           // 日本二次元
+        "https://api.waifu.pics/sfw/waifu",               // 二次元角色
+        "https://api.lolicon.app/setu/v2?tag=白丝",        // LOLICON API(白丝)
+        "https://api.lolicon.app/setu/v2?tag=黑丝",        // LOLICON API(黑丝)
+        // 备用源
+        "https://img.xjh.me/random_img.php",
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",   // 火影忍者自适应
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%971",     // P站画师GTZ taejune的插画
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%972",     // P站系列2（湿身女孩们的美图分享）
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%973",     // P站画师 TID含NSFW(需谨慎使用) 
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E5%8E%9F%E7%A5%9E",  // 原神
         "https://api.paugram.com/wallpaper"
     ];
 
     const background = document.querySelector('.background');
-    const maxRetry = 3;
+    const maxRetry = 3; // 最大重试次数
     let retryCount = 0;
+    let lastUsedAPI = localStorage.getItem('lastBackgroundAPI') || '';
+
+    // 过滤掉最近使用过的API（避免重复）
+    const availableAPIs = backgroundAPIs.filter(api => api !== lastUsedAPI);
 
     function loadRandomBackground() {
         if (retryCount >= maxRetry) {
+            console.log('达到最大重试次数，使用默认背景');
             setDefaultBackground();
             return;
         }
 
-        const apiUrl = backgroundAPIs[Math.floor(Math.random() * backgroundAPIs.length)];
+        // 随机选择API（优先从未使用的API中选择）
+        const apiUrl = availableAPIs.length > 0 
+            ? availableAPIs[Math.floor(Math.random() * availableAPIs.length)]
+            : backgroundAPIs[Math.floor(Math.random() * backgroundAPIs.length)];
+
+        // 添加时间戳防止缓存
         const finalUrl = apiUrl + (apiUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
 
-        // 使用代理请求
-        const proxyUrl = `${PROXY_SERVER}${encodeURIComponent(finalUrl)}`;
-        
-        console.log('Loading via proxy:', proxyUrl);
+        console.log('尝试加载背景:', finalUrl);
         const img = new Image();
 
-        // 双保险：直接请求和代理请求
-        const imgLoader = (url, isProxy = false) => {
-            return new Promise((resolve, reject) => {
-                const testImg = new Image();
-                testImg.onload = () => resolve(url);
-                testImg.onerror = () => reject();
-                testImg.src = url;
-            });
+        img.onload = function() {
+            // 添加淡入效果
+            background.style.opacity = 0;
+            background.style.backgroundImage = `url('${finalUrl}')`;
+            
+            // 存储最后使用的API
+            localStorage.setItem('lastBackgroundAPI', apiUrl);
+            
+            // 淡入动画
+            setTimeout(() => {
+                background.style.transition = 'opacity 1s ease';
+                background.style.opacity = 1;
+            }, 100);
         };
 
-        // 尝试直接加载
-        imgLoader(finalUrl)
-            .then(url => {
-                console.log('Direct load success');
-                applyBackground(url);
-            })
-            .catch(() => {
-                console.log('Direct load failed, trying proxy');
-                // 尝试代理加载
-                imgLoader(proxyUrl, true)
-                    .then(url => {
-                        console.log('Proxy load success');
-                        applyBackground(url);
-                    })
-                    .catch(() => {
-                        console.log('Proxy load failed');
-                        retryCount++;
-                        setTimeout(loadRandomBackground, 500);
-                    });
-            });
-    }
+        img.onerror = function() {
+            console.log('加载失败:', finalUrl);
+            retryCount++;
+            
+            // 从可用列表中移除失败的API
+            const index = availableAPIs.indexOf(apiUrl);
+            if (index > -1) {
+                availableAPIs.splice(index, 1);
+            }
+            
+            // 延迟500ms后重试
+            setTimeout(loadRandomBackground, 500);
+        };
 
-    function applyBackground(url) {
-        background.style.opacity = 0;
-        background.style.backgroundImage = `url('${url}')`;
-        setTimeout(() => {
-            background.style.transition = 'opacity 1s ease';
-            background.style.opacity = 1;
-        }, 100);
+        img.src = finalUrl;
     }
 
     function setDefaultBackground() {
@@ -94,8 +101,10 @@ function setRandomBackground() {
     background.style.backgroundRepeat = 'no-repeat';
     background.style.transition = 'opacity 0.5s ease';
 
+    // 开始加载
     loadRandomBackground();
 }
+
 
 // 2. 搜索配置 (Tab 键循环切换)
 const searchEngines = {
