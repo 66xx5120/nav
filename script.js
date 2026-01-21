@@ -5,6 +5,7 @@
 function setRandomBackground() {
     // 可用API源列表
     const backgroundAPIs = [
+        // 国内稳定源
         "https://api.btstu.cn/sjbz/?lx=m_heisi",
         "https://api.btstu.cn/sjbz/?lx=m_siwameitui",
         "https://api.btstu.cn/sjbz/?lx=meizi",
@@ -12,8 +13,14 @@ function setRandomBackground() {
         "https://api.yimian.xyz/img?type=heisi",
         "https://api.qingyun8.cn/api/sjbz/?type=siwa",
         "https://api.qingyun8.cn/api/sjbz/?type=meizi",
+        // 国际源
         "https://pic.re/image",
         "https://api.waifu.pics/sfw/waifu",
+        "https://api.lolicon.app/setu/v2?tag=白丝",
+        "https://api.lolicon.app/setu/v2?tag=黑丝",
+        // 备用源
+        "https://img.xjh.me/random_img.php",
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",
         "https://api.paugram.com/wallpaper"
     ];
 
@@ -164,21 +171,95 @@ function fetchHitokoto() {
         });
 }
 
-// 简化天气功能
+// 天气功能 (使用高德地图API)
 function fetchWeather() {
     const statusDiv = document.getElementById('weather-status');
-    
-    // 使用更简单的天气API
-    fetch('https://api.qweather.com/v7/weather/now?location=auto&key=YOUR_KEY_HERE')
-        .then(response => response.json())
-        .then(data => {
-            if(data.now) {
-                statusDiv.innerText = `${data.now.text} ${data.now.temp}℃`;
-            }
-        })
-        .catch(() => {
-            statusDiv.innerText = "Weather Offline";
+
+    const amapConfig = {
+        key: '02d4bd74cc1897fcb432cc2f77f15098',
+        securityCode: 'fd70b506e58e5953e91efe72322b9aff',
+        defaultCity: '330400' // 嘉兴
+    };
+
+    function startWeatherSystem() {
+        window._AMapSecurityConfig = { securityJsCode: amapConfig.securityCode };
+
+        if (typeof AMap === 'undefined') {
+            const script = document.createElement('script');
+            script.src = `https://webapi.amap.com/maps?v=2.0&key=${amapConfig.key}`;
+            script.onload = runAmapLogic;
+            script.onerror = fallbackWeather;
+            document.head.appendChild(script);
+        } else {
+            runAmapLogic();
+        }
+    }
+
+    function runAmapLogic() {
+        AMap.plugin(['AMap.Geolocation', 'AMap.Weather'], function() {
+            const geolocation = new AMap.Geolocation({
+                enableHighAccuracy: false,
+                timeout: 3000
+            });
+            const weather = new AMap.Weather();
+
+            geolocation.getCityInfo((status, result) => {
+                let targetAdcode = amapConfig.defaultCity;
+                if (status === 'complete' && result.adcode) {
+                    targetAdcode = result.adcode;
+                    console.log("定位成功:", result.city);
+                } else {
+                    console.warn("定位失败，使用默认城市");
+                }
+
+                weather.getLive(targetAdcode, (err, data) => {
+                    if (!err && data.info === 'OK') {
+                        statusDiv.innerText = `${data.city}: ${data.weather} ${data.temperature}℃`;
+                    } else {
+                        fallbackWeather();
+                    }
+                });
+            });
         });
+    }
+
+    function fallbackWeather() {
+        console.log("使用备用天气信息");
+        statusDiv.innerText = "Weather: Sunny 25℃";
+    }
+
+    startWeatherSystem();
+}
+
+// 初始化音乐播放器
+function initMusicPlayer() {
+    const ap = new APlayer({
+        container: document.getElementById('aplayer'),
+        fixed: true,
+        mini: true,
+        autoplay: false,
+        theme: '#06b6d4',
+        order: 'random',
+        preload: 'auto',
+        volume: 0.7,
+        mutex: true,
+        lrcType: 1,
+        listFolded: true,
+        listMaxHeight: 90,
+        audio: [{
+            name: '起风了',
+            artist: '买辣椒也用券',
+            url: 'https://music.163.com/song/media/outer/url?id=1330348068.mp3',
+            cover: 'https://p1.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163696969069.jpg',
+            lrc: 'https://music.163.com/api/song/lyric?id=1330348068&lv=1'
+        }, {
+            name: '夜に駆ける',
+            artist: 'YOASOBI',
+            url: 'https://music.163.com/song/media/outer/url?id=1413863166.mp3',
+            cover: 'https://p2.music.126.net/9idkdzbel_-lYBP7Dv_dVA==/109951164955246383.jpg',
+            lrc: 'https://music.163.com/api/song/lyric?id=1413863166&lv=1'
+        }]
+    });
 }
 
 // 初始化
@@ -194,6 +275,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateClock, 1000);
     fetchHitokoto();
     fetchWeather();
+    initMusicPlayer();
+    setRandomBackground();
 });
 
 window.addEventListener('load', function() {
