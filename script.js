@@ -302,10 +302,8 @@ function checkNetworkStatus() {
     const targets = [
         { id: 'bytedance', name: '字节跳动', icon: 'fab fa-tiktok', type: 'cn', url: 'https://www.douyin.com/favicon.ico' },
         { id: 'bilibili', name: 'Bilibili', icon: 'fab fa-bilibili', type: 'cn', url: 'https://www.bilibili.com/favicon.ico' },
-        { id: 'wechat', name: '微信', icon: 'fab fa-weixin', type: 'cn', url: 'https://weixin.qq.com/favicon.ico' },
         { id: 'taobao', name: '淘宝', icon: 'fas fa-shopping-bag', type: 'cn', url: 'https://www.taobao.com/favicon.ico' },
         { id: 'github', name: 'GitHub', icon: 'fab fa-github', type: 'intl', url: 'https://github.com/favicon.ico' },
-        { id: 'jsdelivr', name: 'jsDelivr', icon: 'fas fa-cube', type: 'intl', url: 'https://cdn.jsdelivr.net/favicon.ico' },
         { id: 'cloudflare', name: 'Cloudflare', icon: 'fas fa-cloud', type: 'intl', url: 'https://www.cloudflare.com/favicon.ico' },
         { id: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', type: 'intl', url: 'https://www.youtube.com/favicon.ico' }
     ];
@@ -358,38 +356,43 @@ function checkNetworkStatus() {
 
     // 3. 核心测速函数 (单次)
     const pingTarget = async (target) => {
-        const textElem = document.getElementById(`ping-${target.id}`);
-        const dotsElem = document.getElementById(`status-${target.id}`);
-        if (!textElem || !dotsElem) return;
+    const textElem = document.getElementById(`ping-${target.id}`);
+    const dotsElem = document.getElementById(`status-${target.id}`);
+    
+    if (!textElem || !dotsElem) return;
 
+    const testUrl = `${target.url}/?ping-test=${Date.now()}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+    try {
         const start = performance.now();
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3秒超时
+        await fetch(testUrl, { 
+            mode: 'no-cors',
+            signal: controller.signal,
+            cache: 'no-store'
+        });
+        clearTimeout(timeoutId);
+        
+        const latency = Math.round(performance.now() - start);
+        updateNetworkStatus(target.id, latency, textElem, dotsElem);
+    } catch (error) {
+        clearTimeout(timeoutId);
+        updateNetworkStatus(target.id, -1, textElem, dotsElem);
+    }
+};
 
-        try {
-            // mode: 'no-cors' 是必须的，cache: 'no-store' 加上时间戳强制不缓存
-            await fetch(`${target.url}?t=${Date.now()}`, { 
-                mode: 'no-cors', 
-                cache: 'no-store',
-                signal: controller.signal 
-            });
-            
-            clearTimeout(timeoutId);
-            const end = performance.now();
-            // 增加随机抖动(0-5ms)，模拟真实波动
-            const jitter = Math.floor(Math.random() * 5); 
-            const latency = Math.round(end - start) + jitter;
-
-            textElem.innerText = `${latency}ms`;
-            const color = renderStatusDots(latency, dotsElem);
-            textElem.className = `net-latency text-${color}`;
-
-        } catch (error) {
-            textElem.innerText = 'OFF';
-            textElem.className = 'net-latency text-red';
-            renderStatusDots(-1, dotsElem);
-        }
-    };
+function updateNetworkStatus(id, latency, textElem, dotsElem) {
+    if (latency === -1) {
+        textElem.innerText = 'OFF';
+        textElem.className = 'net-latency text-red';
+        renderStatusDots(-1, dotsElem);
+    } else {
+        textElem.innerText = `${latency}ms`;
+        const colorClass = renderStatusDots(latency, dotsElem);
+        textElem.className = `net-latency text-${colorClass}`;
+    }
+}
 
     // 4. 启动无限循环 (Heartbeat Loop)
     targets.forEach(target => {
