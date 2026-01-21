@@ -1,24 +1,119 @@
-// 1. 背景设置 (优化版：改为固定高速 CDN 壁纸，提升加载速度)
-function setFixedBackground() {
-    // 选用了一张深色系、科技感强的“地球网络”壁纸，非常契合“终端”主题
-    // 使用 Unsplash 的 auto=format (WebP) 和 q=80 参数进行极致压缩
-    const bgUrl = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop";
-    
+/**
+ * 设置随机背景图
+ * 包含多个API源和错误处理机制
+ */
+function setRandomBackground() {
+    // 可用API源列表
+    const backgroundAPIs = [
+        // 国内稳定源
+        "https://api.btstu.cn/sjbz/?lx=m_heisi",          // 黑丝专题
+        "https://api.btstu.cn/sjbz/?lx=m_siwameitui",     // 丝袜美腿
+        "https://api.btstu.cn/sjbz/?lx=meizi",            // 随机美女
+        "https://api.btstu.cn/sjbz/?lx=m_dongman",        // 动漫风格
+        "https://api.yimian.xyz/img?type=heisi",          // 黑丝API
+        "https://api.qingyun8.cn/api/sjbz/?type=siwa",    // 丝袜专题
+        "https://api.qingyun8.cn/api/sjbz/?type=meizi",   // 高清美女
+        // 国际源
+        "https://pic.re/image",                           // 日本二次元
+        "https://api.waifu.pics/sfw/waifu",               // 二次元角色
+        "https://api.lolicon.app/setu/v2?tag=白丝",        // LOLICON API(白丝)
+        "https://api.lolicon.app/setu/v2?tag=黑丝",        // LOLICON API(黑丝)
+        // "https://api.waifu.pics/nsfw/waifu",            // NSFW(需谨慎使用)
+        // 备用源
+        "https://img.xjh.me/random_img.php",
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",   // 火影忍者自适应
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%971",     // P站画师GTZ taejune的插画
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%972",     // P站系列2（湿身女孩们的美图分享）
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=P%E7%AB%99%E7%B3%BB%E5%88%973",     // P站画师 TID含NSFW(需谨慎使用) 
+        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E5%8E%9F%E7%A5%9E",  // 原神
+        "https://api.paugram.com/wallpaper"
+    ];
+
     const background = document.querySelector('.background');
-    const img = new Image();
-    
-    // 预加载逻辑：图片加载成功后才替换背景，避免闪屏
-    img.src = bgUrl;
-    img.onload = function() {
-        background.style.backgroundImage = `url('${bgUrl}')`;
-        background.style.opacity = '1'; // 确保 CSS 中如果有 opacity 过渡能生效
-    };
-    
-    // 兜底：如果图片加载极快或缓存了，直接显示
-    if (img.complete) {
-        background.style.backgroundImage = `url('${bgUrl}')`;
+    const maxRetry = 3; // 最大重试次数
+    let retryCount = 0;
+    let lastUsedAPI = localStorage.getItem('lastBackgroundAPI') || '';
+
+    // 过滤掉最近使用过的API（避免重复）
+    const availableAPIs = backgroundAPIs.filter(api => api !== lastUsedAPI);
+
+    function loadRandomBackground() {
+        if (retryCount >= maxRetry) {
+            console.log('达到最大重试次数，使用默认背景');
+            setDefaultBackground();
+            return;
+        }
+
+        // 随机选择API（优先从未使用的API中选择）
+        const apiUrl = availableAPIs.length > 0 
+            ? availableAPIs[Math.floor(Math.random() * availableAPIs.length)]
+            : backgroundAPIs[Math.floor(Math.random() * backgroundAPIs.length)];
+
+        // 添加时间戳防止缓存
+        const finalUrl = apiUrl + (apiUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+
+        console.log('尝试加载背景:', finalUrl);
+        const img = new Image();
+
+        img.onload = function() {
+            // 添加淡入效果
+            background.style.opacity = 0;
+            background.style.backgroundImage = `url('${finalUrl}')`;
+            
+            // 存储最后使用的API
+            localStorage.setItem('lastBackgroundAPI', apiUrl);
+            
+            // 淡入动画
+            setTimeout(() => {
+                background.style.transition = 'opacity 1s ease';
+                background.style.opacity = 1;
+            }, 100);
+        };
+
+        img.onerror = function() {
+            console.log('加载失败:', finalUrl);
+            retryCount++;
+            
+            // 从可用列表中移除失败的API
+            const index = availableAPIs.indexOf(apiUrl);
+            if (index > -1) {
+                availableAPIs.splice(index, 1);
+            }
+            
+            // 延迟500ms后重试
+            setTimeout(loadRandomBackground, 500);
+        };
+
+        img.src = finalUrl;
     }
+
+    function setDefaultBackground() {
+        const defaultImages = [
+            './local-images/default1.jpg',
+            './local-images/default2.jpg'
+        ];
+        const randomDefault = defaultImages[Math.floor(Math.random() * defaultImages.length)];
+        background.style.backgroundImage = `url('${randomDefault}')`;
+    }
+
+    // 初始化背景样式
+    background.style.backgroundSize = 'cover';
+    background.style.backgroundPosition = 'center';
+    background.style.backgroundRepeat = 'no-repeat';
+    background.style.transition = 'opacity 0.5s ease';
+
+    // 开始加载
+    loadRandomBackground();
 }
+
+// 使用示例（可在页面加载时调用）
+window.addEventListener('DOMContentLoaded', setRandomBackground);
+
+// 每小时自动更换背景
+setInterval(setRandomBackground, 60 * 60 * 1000);
+
+// 点击背景更换图片（可选）
+document.querySelector('.background').addEventListener('click', setRandomBackground);
 
 // 2. 搜索配置 (Tab 键循环切换)
 const searchEngines = {
@@ -110,7 +205,7 @@ function fetchWeather() {
     const amapConfig = {
         key: '02d4bd74cc1897fcb432cc2f77f15098',
         securityCode: 'fd70b506e58e5953e91efe72322b9aff',
-        defaultCity: '320100' // 南京
+        defaultCity: '330400' // 嘉兴
     };
 
     const seniverseConfig = {
@@ -182,7 +277,7 @@ function fetchWeather() {
 function fetchGithubStars() {
     const starCountElem = document.getElementById('github-star-count');
     
-    fetch('https://api.github.com/repos/loong2004/my-nav-page')
+    fetch('https://api.github.com/repos/66xx5120/nav')
         .then(response => {
             if (response.status === 403 || response.status === 429) {
                 throw new Error("Rate Limit Exceeded");
@@ -355,7 +450,7 @@ fetchGithubStars();
 checkNetworkStatus(); // 启动网络监测
 
 console.log(
-    "%c Loong's Terminal %c System Ready ",
+    "%c Six's Terminal %c System Ready ",
     "background:#06b6d4; color:#000; font-weight:bold; border-radius: 4px 0 0 4px; padding: 4px;",
     "background:#0f172a; color:#06b6d4; font-weight:bold; border: 1px solid #06b6d4; border-radius: 0 4px 4px 0; padding: 3px;"
 );
