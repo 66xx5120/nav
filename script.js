@@ -105,7 +105,6 @@ function setRandomBackground() {
     loadRandomBackground();
 }
 
-
 // 2. 搜索配置 (Tab 键循环切换)
 const searchEngines = {
     google: { url: "https://www.google.com/search?q=", icon: "fab fa-google", placeholder: "Search with Google..." },
@@ -262,154 +261,7 @@ function fetchWeather() {
     startWeatherSystem();
 }
 
-// 6. 自动获取 GitHub Star 数
-function fetchGithubStars() {
-    const starCountElem = document.getElementById('github-star-count');
-    
-    fetch('https://api.github.com/repos/66xx5120/nav')
-        .then(response => {
-            if (response.status === 403 || response.status === 429) {
-                throw new Error("Rate Limit Exceeded");
-            }
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.stargazers_count !== undefined) {
-                starCountElem.innerText = data.stargazers_count;
-            } else {
-                starCountElem.innerText = "-";
-            }
-        })
-        .catch(err => {
-            console.warn("GitHub Star fetch failed:", err.message);
-            starCountElem.innerText = "N/A";
-            starCountElem.title = "GitHub API Rate Limit or Network Error";
-        });
-}
-
-// 7. 网络状态监控 (Refined: 动态生成 + 实时心跳 + 呼吸感监测)
-function checkNetworkStatus() {
-    const grid = document.getElementById('network-grid');
-    if (!grid) {
-        console.error('Network grid element not found');
-        return;
-    }
-    
-    // 配置列表
-    const targets = [
-        { id: 'bytedance', name: '字节跳动', icon: 'fab fa-tiktok', type: 'cn', url: 'https://www.douyin.com/favicon.ico' },
-        { id: 'bilibili', name: 'Bilibili', icon: 'fab fa-bilibili', type: 'cn', url: 'https://www.bilibili.com/favicon.ico' },
-        { id: 'taobao', name: '淘宝', icon: 'fas fa-shopping-bag', type: 'cn', url: 'https://www.taobao.com/favicon.ico' },
-        { id: 'github', name: 'GitHub', icon: 'fab fa-github', type: 'intl', url: 'https://github.com/favicon.ico' },
-        { id: 'cloudflare', name: 'Cloudflare', icon: 'fas fa-cloud', type: 'intl', url: 'https://www.cloudflare.com/favicon.ico' },
-        { id: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', type: 'intl', url: 'https://www.youtube.com/favicon.ico' }
-    ];
-
-    // 1. 动态生成卡片 (DRY)
-    grid.innerHTML = targets.map(t => `
-        <div class="net-card">
-            <div class="net-header">
-                <span class="net-icon"><i class="${t.icon}"></i> ${t.name}</span>
-                <span class="net-badge badge-${t.type}">${t.type === 'cn' ? '国内' : '国际'}</span>
-            </div>
-            <div class="net-body">
-                <span class="net-latency" id="ping-${t.id}">WAIT</span>
-                <div class="status-dots" id="status-${t.id}">
-                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
-    // 2. 渲染信号灯 (Helper)
-    const renderStatusDots = (latency, elem) => {
-        let colorClass = 'green';
-        let activeCount = 6;
-
-        if (latency === -1) { // Timeout/Error
-            colorClass = 'red';
-            activeCount = 1;
-        } else if (latency < 100) {
-            colorClass = 'green';
-            activeCount = 6;
-        } else if (latency < 250) {
-            colorClass = 'yellow';
-            activeCount = 4;
-        } else {
-            colorClass = 'red';
-            activeCount = 2;
-        }
-
-        let html = '';
-        for (let i = 0; i < 6; i++) {
-            const isActive = i < activeCount;
-            const className = isActive ? `dot ${colorClass}` : 'dot';
-            html += `<div class="${className}"></div>`;
-        }
-        elem.innerHTML = html;
-        return colorClass;
-    };
-
-    // 3. 核心测速函数 (单次)
-    const pingTarget = async (target) => {
-    const textElem = document.getElementById(`ping-${target.id}`);
-    const dotsElem = document.getElementById(`status-${target.id}`);
-    
-    if (!textElem || !dotsElem) return;
-
-    const testUrl = `${target.url}/?ping-test=${Date.now()}`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-    try {
-        const start = performance.now();
-        await fetch(testUrl, { 
-            mode: 'no-cors',
-            signal: controller.signal,
-            cache: 'no-store'
-        });
-        clearTimeout(timeoutId);
-        
-        const latency = Math.round(performance.now() - start);
-        updateNetworkStatus(target.id, latency, textElem, dotsElem);
-    } catch (error) {
-        clearTimeout(timeoutId);
-        updateNetworkStatus(target.id, -1, textElem, dotsElem);
-    }
-};
-
-function updateNetworkStatus(id, latency, textElem, dotsElem) {
-    if (latency === -1) {
-        textElem.innerText = 'OFF';
-        textElem.className = 'net-latency text-red';
-        renderStatusDots(-1, dotsElem);
-    } else {
-        textElem.innerText = `${latency}ms`;
-        const colorClass = renderStatusDots(latency, dotsElem);
-        textElem.className = `net-latency text-${colorClass}`;
-    }
-}
-
-    // 4. 启动无限循环 (Heartbeat Loop)
-    targets.forEach(target => {
-        const loop = async () => {
-            await pingTarget(target);
-            
-            // 随机间隔 1.5s 到 3.5s，让由于网络波动造成的数值跳动看起来"此起彼伏"
-            const nextDelay = Math.floor(Math.random() * 2000) + 1500; 
-            setTimeout(loop, nextDelay);
-        };
-        
-        // 错峰启动，防止页面刚加载时瞬间卡顿
-        setTimeout(loop, Math.random() * 1000);
-    });
-}
-
-// 8. 极速预加载控制 (System Initialization - Turbo Mode)
+// 极速预加载控制 (System Initialization - Turbo Mode)
 document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('preloader');
     
@@ -428,8 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateClock, 1000); // 设置定时器
     fetchHitokoto();
     fetchWeather();
-    fetchGithubStars();
-    checkNetworkStatus(); // 初始化网络状态监控
 });
 
 // 兜底策略：以防 DOMContentLoaded 未触发
