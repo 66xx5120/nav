@@ -18,7 +18,6 @@ function setRandomBackground() {
         "https://api.waifu.pics/sfw/waifu",               // 二次元角色
         "https://api.lolicon.app/setu/v2?tag=白丝",        // LOLICON API(白丝)
         "https://api.lolicon.app/setu/v2?tag=黑丝",        // LOLICON API(黑丝)
-        // "https://api.waifu.pics/nsfw/waifu",            // NSFW(需谨慎使用)
         // 备用源
         "https://img.xjh.me/random_img.php",
         "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",   // 火影忍者自适应
@@ -106,15 +105,6 @@ function setRandomBackground() {
     loadRandomBackground();
 }
 
-// 使用示例（可在页面加载时调用）
-window.addEventListener('DOMContentLoaded', setRandomBackground);
-
-// 每小时自动更换背景
-setInterval(setRandomBackground, 60 * 60 * 1000);
-
-// 点击背景更换图片（可选）
-document.querySelector('.background').addEventListener('click', setRandomBackground);
-
 // 2. 搜索配置 (Tab 键循环切换)
 const searchEngines = {
     google: { url: "https://www.google.com/search?q=", icon: "fab fa-google", placeholder: "Search with Google..." },
@@ -197,7 +187,6 @@ function fetchHitokoto() {
         .catch(() => { document.getElementById('hitokoto_text').innerText = "System connected. Ready for input."; });
 }
 
-
 // 5. 天气 (高德定位 -> 高德天气 -> 心知备用)
 function fetchWeather() {
     const statusDiv = document.getElementById('weather-status');
@@ -272,7 +261,6 @@ function fetchWeather() {
     startWeatherSystem();
 }
 
-
 // 6. 自动获取 GitHub Star 数
 function fetchGithubStars() {
     const starCountElem = document.getElementById('github-star-count');
@@ -304,6 +292,10 @@ function fetchGithubStars() {
 // 7. 网络状态监控 (Refined: 动态生成 + 实时心跳 + 呼吸感监测)
 function checkNetworkStatus() {
     const grid = document.getElementById('network-grid');
+    if (!grid) {
+        console.error('Network grid element not found');
+        return;
+    }
     
     // 配置列表
     const targets = [
@@ -318,23 +310,21 @@ function checkNetworkStatus() {
     ];
 
     // 1. 动态生成卡片 (DRY)
-    if (grid) {
-        grid.innerHTML = targets.map(t => `
-            <div class="net-card">
-                <div class="net-header">
-                    <span class="net-icon"><i class="${t.icon}"></i> ${t.name}</span>
-                    <span class="net-badge badge-${t.type}">${t.type === 'cn' ? '国内' : '国际'}</span>
-                </div>
-                <div class="net-body">
-                    <span class="net-latency" id="ping-${t.id}">WAIT</span>
-                    <div class="status-dots" id="status-${t.id}">
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                    </div>
+    grid.innerHTML = targets.map(t => `
+        <div class="net-card">
+            <div class="net-header">
+                <span class="net-icon"><i class="${t.icon}"></i> ${t.name}</span>
+                <span class="net-badge badge-${t.type}">${t.type === 'cn' ? '国内' : '国际'}</span>
+            </div>
+            <div class="net-body">
+                <span class="net-latency" id="ping-${t.id}">WAIT</span>
+                <div class="status-dots" id="status-${t.id}">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                 </div>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
 
     // 2. 渲染信号灯 (Helper)
     const renderStatusDots = (latency, elem) => {
@@ -405,7 +395,7 @@ function checkNetworkStatus() {
         const loop = async () => {
             await pingTarget(target);
             
-            // 随机间隔 1.5s 到 3.5s，让由于网络波动造成的数值跳动看起来“此起彼伏”
+            // 随机间隔 1.5s 到 3.5s，让由于网络波动造成的数值跳动看起来"此起彼伏"
             const nextDelay = Math.floor(Math.random() * 2000) + 1500; 
             setTimeout(loop, nextDelay);
         };
@@ -416,11 +406,10 @@ function checkNetworkStatus() {
 }
 
 // 8. 极速预加载控制 (System Initialization - Turbo Mode)
-// 修正逻辑：DOM 准备好立刻显示，不再等待所有资源加载完毕
 document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('preloader');
     
-    // 300ms 极短缓冲，仅为了平滑过渡，消除 1.5s 的人为卡顿
+    // 300ms 极短缓冲，仅为了平滑过渡
     setTimeout(function() {
         loader.classList.add('hidden');
         
@@ -429,6 +418,14 @@ document.addEventListener('DOMContentLoaded', function() {
             loader.style.display = 'none';
         }, 500); 
     }, 300); 
+
+    // 初始化所有功能
+    updateClock(); // 立即更新时间
+    setInterval(updateClock, 1000); // 设置定时器
+    fetchHitokoto();
+    fetchWeather();
+    fetchGithubStars();
+    checkNetworkStatus(); // 初始化网络状态监控
 });
 
 // 兜底策略：以防 DOMContentLoaded 未触发
@@ -440,14 +437,11 @@ window.addEventListener('load', function() {
     }
 });
 
-// 初始化
-setFixedBackground(); // 改名调用新函数：设置固定背景
-setInterval(updateClock, 1000);
-updateClock();
-fetchHitokoto();
-fetchWeather();
-fetchGithubStars();
-checkNetworkStatus(); // 启动网络监测
+// 每小时自动更换背景
+setInterval(setRandomBackground, 60 * 60 * 1000);
+
+// 点击背景更换图片（可选）
+document.querySelector('.background').addEventListener('click', setRandomBackground);
 
 console.log(
     "%c Six's Terminal %c System Ready ",
