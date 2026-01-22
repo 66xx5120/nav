@@ -14,18 +14,20 @@ function setRandomBackground() {
     
     // 新增专业壁纸API（稳定快速）
     "https://www.dmoe.cc/random.php", // 动漫随机图
-    "https://acg.toubiec.cn/random.php", // ACG随机图
     "https://imgapi.cn/api.php?fl=meizi", // 妹子图
     "https://imgapi.cn/api.php?fl=heisi", // 黑丝图
-    
-    // 国内CDN加速源
-    "https://api.ixiaowai.cn/api/api.php", // 小歪API
-    "https://api.ixiaowai.cn/gqapi/gqapi.php", // 高清API
-    
+        
+    // 动漫类（稳定）
+    "https://www.dmoe.cc/random.php",
+        
     // 备用国际源
     "https://api.waifu.pics/sfw/waifu", // 二次元
     "https://api.waifu.pics/sfw/neko", // 猫娘
-    
+    "https://api.r10086.com/樱道随机图片api接口.php?自适应图片系列=原神",
+    "https://api.r10086.com/樱道随机图片api接口.php?自适应图片系列=火影忍者",
+    "https://api.r10086.com/樱道随机图片api接口.php?图片系列=极品美女图片",
+    "https://api.r10086.com/樱道随机图片api接口.php?图片系列=风景系列8",
+        
     // 特殊类型参数
     "https://api.btstu.cn/sjbz/?lx=m_swmt", // 丝袜美腿(备用参数)
     "https://api.btstu.cn/sjbz/?lx=m_bz", // 妹子壁纸
