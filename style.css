@@ -47,6 +47,7 @@ body {
     z-index: -2;
     filter: brightness(0.6) blur(2px) contrast(1.1); 
     transition: background-image 0.5s ease-in-out;
+    cursor: pointer;
 }
 
 .grid-overlay {
@@ -250,65 +251,6 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-/* =================================================================
-   APlayer 播放器样式
-   ================================================================= */
-#aplayer {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 9999;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-}
-
-.aplayer {
-    background: rgba(5, 8, 16, 0.95) !important;
-    backdrop-filter: blur(20px) !important;
-    border: none !important;
-    border-left: 3px solid var(--accent-cyan) !important;
-    border-radius: 4px !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), -2px 0 15px rgba(6, 182, 212, 0.2) !important;
-    color: #e2e8f0 !important;
-    font-family: 'JetBrains Mono', 'DS-Digital', monospace !important;
-    margin: 0 !important;
-    z-index: 9999;
-    max-width: 400px;
-}
-
-.aplayer.aplayer-fixed .aplayer-body {
-    background: rgba(5, 8, 16, 0.95) !important;
-    border: 1px solid rgba(6, 182, 212, 0.3) !important;
-    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2) !important;
-}
-
-.aplayer .aplayer-list { border-color: rgba(255, 255, 255, 0.05) !important; }
-.aplayer .aplayer-list ol li { border-top: 1px solid rgba(255,255,255,0.02) !important; transition: all 0.2s ease !important; position: relative; }
-.aplayer .aplayer-list ol li:hover { background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent) !important; padding-left: 20px !important; }
-.aplayer .aplayer-list ol li:hover::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); }
-.aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(6, 182, 212, 0.05) !important; }
-.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-title { color: var(--accent-cyan) !important; text-shadow: 0 0 5px rgba(6, 182, 212, 0.6); }
-.aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-author { color: var(--accent-pink) !important; }
-.aplayer .aplayer-info { border-bottom: 1px solid rgba(255,255,255,0.05) !important; padding: 15px 10px !important; }
-.aplayer .aplayer-info .aplayer-music .aplayer-title { color: #fff !important; font-size: 15px !important; font-weight: bold; }
-.aplayer .aplayer-info .aplayer-music .aplayer-author { color: #64748b !important; font-size: 12px !important; text-transform: uppercase; letter-spacing: 1px; }
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar { height: 4px !important; background: rgba(255,255,255,0.1) !important; border-radius: 2px !important; }
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded { background: rgba(255,255,255,0.2) !important; height: 4px !important; }
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink)) !important; height: 4px !important; box-shadow: 0 0 10px var(--accent-cyan) !important; border-radius: 2px !important; }
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb { background: #fff !important; border: none !important; width: 12px !important; height: 12px !important; box-shadow: 0 0 10px #fff, 0 0 20px var(--accent-pink) !important; margin-top: -4px !important; transform: scale(0.8) !important; }
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb:hover { transform: scale(1.2) !important; }
-.aplayer .aplayer-lrc { text-shadow: 0 2px 5px rgba(0,0,0,0.5); margin: 4px 0 !important; }
-.aplayer .aplayer-lrc:before, .aplayer .aplayer-lrc:after { background: none !important; }
-.aplayer .aplayer-lrc p { color: rgba(255,255,255,0.4) !important; font-size: 12px !important; font-family: 'LXGW WenKai Screen', sans-serif !important; line-height: 16px !important; opacity: 0.6; }
-.aplayer .aplayer-lrc p.aplayer-lrc-current { color: var(--accent-cyan) !important; font-size: 14px !important; font-weight: bold; opacity: 1; text-shadow: 0 0 10px rgba(6, 182, 212, 0.6) !important; transform: scale(1.05); transition: all 0.3s ease; }
-.aplayer .aplayer-icon { color: rgba(255,255,255,0.6) !important; transition: all 0.3s !important; }
-.aplayer .aplayer-icon:hover { color: var(--accent-cyan) !important; filter: drop-shadow(0 0 5px var(--accent-cyan)); }
-.aplayer .aplayer-icon-menu { display: block !important; }
-.aplayer .aplayer-pic { border: 2px solid rgba(255,255,255,0.1); transition: border-color 0.3s; }
-.aplayer .aplayer-pic:hover { border-color: var(--accent-cyan); }
 
 /* =================================================================
    GitHub Star 按钮 - 右上角悬浮
@@ -535,4 +477,26 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
   80% { width: 100%; transform: translateX(0px); }
   90% { width: 80%; transform: translateX(15px); }
   100% { transform: translateX(0px); width: 16px; }
+}
+
+/* MetingJS 播放器样式 */
+.meting-js {
+    position: fixed !important;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    background: rgba(5, 8, 16, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border: none !important;
+    border-left: 3px solid var(--accent-cyan) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), -2px 0 15px rgba(6, 182, 212, 0.2) !important;
+    color: #e2e8f0 !important;
+    font-family: 'JetBrains Mono', 'DS-Digital', monospace !important;
+    margin: 0 !important;
+    max-width: 400px;
 }
