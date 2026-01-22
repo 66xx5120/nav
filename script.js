@@ -6,23 +6,19 @@ function setRandomBackground() {
     // 可用API源列表 (经过筛选的稳定源)
     const backgroundAPIs = [
         // 原有稳定API
-    "https://api.btstu.cn/sjbz/?lx=m_heisi", // 黑丝
+    "https://api.btstu.cn/sjbz/?lx=m_heisi",      // 黑丝
     "https://api.btstu.cn/sjbz/?lx=m_siwameitui", // 丝袜美腿
-    "https://api.btstu.cn/sjbz/?lx=meizi", // 妹子
-    "https://api.btstu.cn/sjbz/?lx=m_dongman", // 动漫
-    "https://api.paugram.com/wallpaper", // Paul的壁纸API
+    "https://api.btstu.cn/sjbz/?lx=meizi",        // 妹子
+    "https://api.btstu.cn/sjbz/?lx=m_dongman",    // 动漫
+    "https://api.paugram.com/wallpaper",          // Paul的壁纸API
     
     // 新增专业壁纸API（稳定快速）
-    "https://www.dmoe.cc/random.php", // 动漫随机图
+    "https://www.dmoe.cc/random.php",     // 动漫随机图
     "https://imgapi.cn/api.php?fl=meizi", // 妹子图
     "https://imgapi.cn/api.php?fl=heisi", // 黑丝图
+    "https://www.dmoe.cc/random.php",     // 动漫随机图
         
-    // 动漫类（稳定）
-    "https://www.dmoe.cc/random.php",
-        
-    // 备用国际源
-    "https://api.waifu.pics/sfw/waifu", // 二次元
-    "https://api.waifu.pics/sfw/neko", // 猫娘
+    // 备用源
     "https://api.r10086.com/樱道随机图片api接口.php?自适应图片系列=原神",
     "https://api.r10086.com/樱道随机图片api接口.php?自适应图片系列=火影忍者",
     "https://api.r10086.com/樱道随机图片api接口.php?图片系列=极品美女图片",
@@ -30,8 +26,8 @@ function setRandomBackground() {
         
     // 特殊类型参数
     "https://api.btstu.cn/sjbz/?lx=m_swmt", // 丝袜美腿(备用参数)
-    "https://api.btstu.cn/sjbz/?lx=m_bz", // 妹子壁纸
-    "https://api.btstu.cn/sjbz/?lx=m_loli" // 萝莉
+    "https://api.btstu.cn/sjbz/?lx=m_bz",   // 妹子壁纸
+    "https://api.btstu.cn/sjbz/?lx=m_loli"  // 萝莉
     ];
 
     const background = document.querySelector('.background');
