@@ -231,37 +231,6 @@ function fetchWeather() {
     startWeatherSystem();
 }
 
-// 初始化音乐播放器
-function initMusicPlayer() {
-    const ap = new APlayer({
-        container: document.getElementById('aplayer'),
-        fixed: true,
-        mini: true,
-        autoplay: false,
-        theme: '#06b6d4',
-        order: 'random',
-        preload: 'auto',
-        volume: 0.7,
-        mutex: true,
-        lrcType: 1,
-        listFolded: true,
-        listMaxHeight: 90,
-        audio: [{
-            name: '起风了',
-            artist: '买辣椒也用券',
-            url: 'https://music.163.com/song/media/outer/url?id=1330348068.mp3',
-            cover: 'https://p1.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163696969069.jpg',
-            lrc: 'https://music.163.com/api/song/lyric?id=1330348068&lv=1'
-        }, {
-            name: '夜に駆ける',
-            artist: 'YOASOBI',
-            url: 'https://music.163.com/song/media/outer/url?id=1413863166.mp3',
-            cover: 'https://p2.music.126.net/9idkdzbel_-lYBP7Dv_dVA==/109951164955246383.jpg',
-            lrc: 'https://music.163.com/api/song/lyric?id=1413863166&lv=1'
-        }]
-    });
-}
-
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('preloader');
@@ -275,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateClock, 1000);
     fetchHitokoto();
     fetchWeather();
-    initMusicPlayer();
     setRandomBackground();
 });
 
