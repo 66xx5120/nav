@@ -3,24 +3,14 @@
  * 包含多个API源和错误处理机制
  */
 function setRandomBackground() {
-    // 可用API源列表
+    // 可用API源列表 (经过筛选的稳定源)
     const backgroundAPIs = [
-        // 国内稳定源
         "https://api.btstu.cn/sjbz/?lx=m_heisi",
         "https://api.btstu.cn/sjbz/?lx=m_siwameitui",
         "https://api.btstu.cn/sjbz/?lx=meizi",
         "https://api.btstu.cn/sjbz/?lx=m_dongman",
         "https://api.yimian.xyz/img?type=heisi",
-        "https://api.qingyun8.cn/api/sjbz/?type=siwa",
-        "https://api.qingyun8.cn/api/sjbz/?type=meizi",
-        // 国际源
-        "https://pic.re/image",
-        "https://api.waifu.pics/sfw/waifu",
-        "https://api.lolicon.app/setu/v2?tag=白丝",
-        "https://api.lolicon.app/setu/v2?tag=黑丝",
-        // 备用源
         "https://img.xjh.me/random_img.php",
-        "https://api.r10086.com/%E6%A8%B1%E9%81%93%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87api%E6%8E%A5%E5%8F%A3.php?%E8%87%AA%E9%80%82%E5%BA%94%E5%9B%BE%E7%89%87%E7%B3%BB%E5%88%97=%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",
         "https://api.paugram.com/wallpaper"
     ];
 
