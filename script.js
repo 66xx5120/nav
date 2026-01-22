@@ -256,7 +256,6 @@ window.addEventListener('load', function() {
 });
 
 setInterval(setRandomBackground, 60 * 60 * 1000);
-document.querySelector('.background').addEventListener('click', setRandomBackground);
 
 console.log(
     "%c Six's Terminal %c System Ready ",
