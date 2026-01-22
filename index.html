@@ -22,7 +22,8 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
       onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+    <link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css">
+
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="./avatar.jpg">
 </head>
@@ -126,16 +127,17 @@
             <span class="BG"></span>
         </a>
 
-        <a href="javascript:void(0)" class="Btn" title="Change Background" onclick="setRandomBackground()">
+        <a href="#" class="Btn" title="Change Background" onclick="setRandomBackground(); return false;">
             <span class="svgContainer">
                 <i class="fas fa-image"></i>
             </span>
             <span class="BG"></span>
         </a>
     </div>
+
+    <div id="aplayer"></div>
     
     <meting-js
-        id="my-meting"
         server="netease"
         type="playlist"
         id="24381616"
@@ -145,14 +147,13 @@
         loop="all"
         preload="auto"
         list-folded="true"
-        lrc-type="1"
-        theme="#06b6d4"
-        mutex="true"
-        volume="0.7">
+        lrc-type="1">
     </meting-js>
     
-    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/aplayer/1.10.1/APlayer.min.js"
+        onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js'"></script>
+    <script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script>
+    <script src="https://npm.elemecdn.com/meting@2/dist/Meting.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
