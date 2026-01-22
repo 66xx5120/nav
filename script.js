@@ -9,8 +9,6 @@ function setRandomBackground() {
         "https://api.btstu.cn/sjbz/?lx=m_siwameitui",
         "https://api.btstu.cn/sjbz/?lx=meizi",
         "https://api.btstu.cn/sjbz/?lx=m_dongman",
-        "https://api.yimian.xyz/img?type=heisi",
-        "https://img.xjh.me/random_img.php",
         "https://api.paugram.com/wallpaper"
     ];
 
