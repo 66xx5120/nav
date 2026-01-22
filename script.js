@@ -5,11 +5,31 @@
 function setRandomBackground() {
     // 可用API源列表 (经过筛选的稳定源)
     const backgroundAPIs = [
-        "https://api.btstu.cn/sjbz/?lx=m_heisi",
-        "https://api.btstu.cn/sjbz/?lx=m_siwameitui",
-        "https://api.btstu.cn/sjbz/?lx=meizi",
-        "https://api.btstu.cn/sjbz/?lx=m_dongman",
-        "https://api.paugram.com/wallpaper"
+        // 原有稳定API
+    "https://api.btstu.cn/sjbz/?lx=m_heisi", // 黑丝
+    "https://api.btstu.cn/sjbz/?lx=m_siwameitui", // 丝袜美腿
+    "https://api.btstu.cn/sjbz/?lx=meizi", // 妹子
+    "https://api.btstu.cn/sjbz/?lx=m_dongman", // 动漫
+    "https://api.paugram.com/wallpaper", // Paul的壁纸API
+    
+    // 新增专业壁纸API（稳定快速）
+    "https://www.dmoe.cc/random.php", // 动漫随机图
+    "https://acg.toubiec.cn/random.php", // ACG随机图
+    "https://imgapi.cn/api.php?fl=meizi", // 妹子图
+    "https://imgapi.cn/api.php?fl=heisi", // 黑丝图
+    
+    // 国内CDN加速源
+    "https://api.ixiaowai.cn/api/api.php", // 小歪API
+    "https://api.ixiaowai.cn/gqapi/gqapi.php", // 高清API
+    
+    // 备用国际源
+    "https://api.waifu.pics/sfw/waifu", // 二次元
+    "https://api.waifu.pics/sfw/neko", // 猫娘
+    
+    // 特殊类型参数
+    "https://api.btstu.cn/sjbz/?lx=m_swmt", // 丝袜美腿(备用参数)
+    "https://api.btstu.cn/sjbz/?lx=m_bz", // 妹子壁纸
+    "https://api.btstu.cn/sjbz/?lx=m_loli" // 萝莉
     ];
 
     const background = document.querySelector('.background');
