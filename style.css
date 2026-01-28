@@ -370,6 +370,22 @@ footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; fon
 }
 .github-star-btn:hover .shine-effect { transform: translateX(-500px) rotate(12deg); }
 
+/* GitHub徽章样式调整 */
+.github-star-btn .btn-right img {
+    height: 28px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* 移除原来的星星图标样式（如果有） */
+.icon-star-mini {
+    display: none;
+}
+
+.star-count {
+    display: none;
+}
+
 /* =================================================================
    右下角固定图标
    ================================================================= */
