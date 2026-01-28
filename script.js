@@ -237,6 +237,49 @@ function fetchWeather() {
     startWeatherSystem();
 }
 
+// 自动获取 GitHub Star 数（加缓存和错误处理）
+function fetchGithubStars() {
+    const starCountElem = document.getElementById('github-star-count');
+    const CACHE_KEY = 'gh_stars_cache';
+    const CACHE_TIME = 3600000; // 1小时
+    
+    // 检查缓存
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+        const { stars, time } = JSON.parse(cached);
+        if (Date.now() - time < CACHE_TIME) {
+            starCountElem.innerText = stars;
+            return;
+        }
+    }
+    
+    fetch('https://api.github.com/repos/66xx5120/nav')
+        .then(response => {
+            if (response.status === 403 || response.status === 429) {
+                throw new Error("Rate Limit Exceeded");
+            }
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.stargazers_count !== undefined) {
+                const stars = data.stargazers_count;
+                starCountElem.innerText = stars;
+                // 缓存结果
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ stars, time: Date.now() }));
+            } else {
+                starCountElem.innerText = "-";
+            }
+        })
+        .catch(err => {
+            console.warn("GitHub Star fetch failed:", err.message);
+            starCountElem.innerText = "N/A";
+            starCountElem.title = "GitHub API Rate Limit or Network Error";
+        });
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('preloader');
